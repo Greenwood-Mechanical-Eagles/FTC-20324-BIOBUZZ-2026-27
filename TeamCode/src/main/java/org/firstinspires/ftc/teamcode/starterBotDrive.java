@@ -103,15 +103,15 @@ public class starterBotDrive extends LinearOpMode {
                 launcherServo.setPower(0);
             }
 
-            if (gamepad2.a && spinnerActive) {
+            if (gamepad2.x) {
                 spinnerActive = false;
                 launcherMotor.setPower(0);
-            } else if (gamepad2.a && (!spinnerActive)) {
+            } else if (gamepad2.a) {
                 spinnerActive = true;
-                launcherMotor.setPower(1);
+                launcherMotor.setPower(0.55);
             } else if (gamepad2.b) { //move backwards anytime, press a to stop
                 spinnerActive = true;
-                launcherMotor.setPower(-1);
+                launcherMotor.setPower(-0.5);
             }
 
             // Telemetry
