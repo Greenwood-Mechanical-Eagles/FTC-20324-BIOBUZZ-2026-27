@@ -41,6 +41,8 @@ public class starterBotDrive extends LinearOpMode {
 
         intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
 
+        flowerCatcher = hardwareMap.get(Servo.class, "flower");
+
 
         // Reverse left side motors if needed
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -111,13 +113,13 @@ public class starterBotDrive extends LinearOpMode {
                 launcherMotor.setPower(0);
             } else if (gamepad2.a) {
                 spinnerActive = true;
-                launcherMotor.setPower(0.85);
+                launcherMotor.setPower(0.70);
             }
 
-            if (gamepad2.bWasPressed()) {
-
-            } else if (gamepad1.bWasReleased()) {
-
+            if (gamepad2.b) {
+                flowerCatcher.setPosition(1);
+            } else if (gamepad2.y) {
+                flowerCatcher.setPosition(0);
             }
 
             // Telemetry
