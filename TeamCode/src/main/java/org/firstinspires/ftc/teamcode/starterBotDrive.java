@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 //import com.qualcomm.robotcore.hardware.CoreHex;
 
 
@@ -22,6 +23,8 @@ public class starterBotDrive extends LinearOpMode {
     private DcMotor launcherMotor;
 
     private DcMotor intakeMotor;
+
+    private Servo flowerCatcher;
 
 
     @Override
@@ -108,10 +111,13 @@ public class starterBotDrive extends LinearOpMode {
                 launcherMotor.setPower(0);
             } else if (gamepad2.a) {
                 spinnerActive = true;
-                launcherMotor.setPower(0.75);
-            } else if (gamepad2.b) { //move backwards anytime, press a to stop
-                spinnerActive = true;
-                launcherMotor.setPower(-0.5);
+                launcherMotor.setPower(0.85);
+            }
+
+            if (gamepad2.bWasPressed()) {
+
+            } else if (gamepad1.bWasReleased()) {
+
             }
 
             // Telemetry
