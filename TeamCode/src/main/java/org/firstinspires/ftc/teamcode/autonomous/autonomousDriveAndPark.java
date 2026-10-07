@@ -24,9 +24,9 @@ public class autonomousDriveAndPark extends LinearOpMode {
         double power = .5;
 
         // Move Forward
-        frontLeftDrive.setPower(power);
+        frontLeftDrive.setPower(power / 1.25);
         frontRightDrive.setPower(power);
-        backLeftDrive.setPower(power);
+        backLeftDrive.setPower(-power);
         backRightDrive.setPower(power);
 
         sleep(2000);
