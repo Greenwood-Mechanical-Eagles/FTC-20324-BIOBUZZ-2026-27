@@ -1,10 +1,9 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 //import com.qualcomm.robotcore.hardware.CoreHex;
 
@@ -119,7 +118,7 @@ public class starterBotDrive extends LinearOpMode {
 
             if (gamepad2.left_trigger > 0) {
                 intakeMotor.setPower(1);
-                launcherServo.setPower(1);
+                launcherServo.setPower(-1);
             } else if (gamepad2.right_trigger > 0) {
                 intakeMotor.setPower(-1);
             } else {
