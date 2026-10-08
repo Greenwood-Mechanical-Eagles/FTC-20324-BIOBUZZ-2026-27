@@ -56,6 +56,11 @@ public class starterBotDrive extends LinearOpMode {
         double tuningStrafe = 1.0;
         double tuningTurn = 1.0;
 
+        // Drive multiplier values
+        double forwardBackwardMult = 1;
+        double precisionMult = 1;
+        boolean movingForward = true;
+
         //boolean for launcher
         boolean spinnerActive = false;
 
@@ -67,6 +72,26 @@ public class starterBotDrive extends LinearOpMode {
             double Forward = -gamepad1.left_stick_y;
             double Strafe = gamepad1.left_stick_x;
             double Turn = gamepad1.right_stick_x;
+
+            double driveCoefficient = forwardBackwardMult * precisionMult;
+
+            if (gamepad1.y) {
+                if (movingForward) {
+                    movingForward = false;
+                    forwardBackwardMult = -1;
+                } else {
+                    movingForward = true;
+                    forwardBackwardMult = 1;
+                }
+            }
+
+            if (gamepad1.left_trigger > 0) {
+                precisionMult = 0.5;
+            } else {
+                precisionMult = 1;
+            }
+
+
 
             // Mecanum drive calculations
             double powerLF = tuningForward * Forward + (tuningTurn * Turn + tuningStrafe * Strafe);
@@ -85,10 +110,10 @@ public class starterBotDrive extends LinearOpMode {
             }
 
             // Set motor power
-            frontLeftDrive.setPower(powerLF);
-            frontRightDrive.setPower(powerRF);
-            backLeftDrive.setPower(powerLR);
-            backRightDrive.setPower(powerRR);
+            frontLeftDrive.setPower(powerLF * driveCoefficient);
+            frontRightDrive.setPower(powerRF * driveCoefficient);
+            backLeftDrive.setPower(powerLR * driveCoefficient);
+            backRightDrive.setPower(powerRR * driveCoefficient);
 
             //controls
 
