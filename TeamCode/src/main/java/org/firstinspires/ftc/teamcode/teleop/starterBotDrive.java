@@ -1,10 +1,10 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 //import com.qualcomm.robotcore.hardware.CoreHex;
 
 
@@ -23,6 +23,8 @@ public class starterBotDrive extends LinearOpMode {
 
     private DcMotor intakeMotor;
 
+    private Servo flowerCatcher;
+
 
     @Override
     public void runOpMode() {
@@ -38,6 +40,8 @@ public class starterBotDrive extends LinearOpMode {
 
         intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
 
+        flowerCatcher = hardwareMap.get(Servo.class, "flower");
+
 
         // Reverse left side motors if needed
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -51,6 +55,11 @@ public class starterBotDrive extends LinearOpMode {
         double tuningStrafe = 1.0;
         double tuningTurn = 1.0;
 
+        // Drive multiplier values
+        double forwardBackwardMult = 1;
+        double precisionMult = 1;
+        boolean movingForward = true;
+
         //boolean for launcher
         boolean spinnerActive = false;
 
@@ -62,6 +71,26 @@ public class starterBotDrive extends LinearOpMode {
             double Forward = -gamepad1.left_stick_y;
             double Strafe = gamepad1.left_stick_x;
             double Turn = gamepad1.right_stick_x;
+
+            double driveCoefficient = forwardBackwardMult * precisionMult;
+
+            if (gamepad1.y) {
+                if (movingForward) {
+                    movingForward = false;
+                    forwardBackwardMult = -1;
+                } else {
+                    movingForward = true;
+                    forwardBackwardMult = 1;
+                }
+            }
+
+            if (gamepad1.left_trigger > 0) {
+                precisionMult = 0.5;
+            } else {
+                precisionMult = 1;
+            }
+
+
 
             // Mecanum drive calculations
             double powerLF = tuningForward * Forward + (tuningTurn * Turn + tuningStrafe * Strafe);
@@ -80,15 +109,16 @@ public class starterBotDrive extends LinearOpMode {
             }
 
             // Set motor power
-            frontLeftDrive.setPower(powerLF);
-            frontRightDrive.setPower(powerRF);
-            backLeftDrive.setPower(powerLR);
-            backRightDrive.setPower(powerRR);
+            frontLeftDrive.setPower(powerLF * driveCoefficient);
+            frontRightDrive.setPower(powerRF * driveCoefficient);
+            backLeftDrive.setPower(powerLR * driveCoefficient);
+            backRightDrive.setPower(powerRR * driveCoefficient);
 
             //controls
 
             if (gamepad2.left_trigger > 0) {
                 intakeMotor.setPower(1);
+                launcherServo.setPower(-1);
             } else if (gamepad2.right_trigger > 0) {
                 intakeMotor.setPower(-1);
             } else {
@@ -99,19 +129,22 @@ public class starterBotDrive extends LinearOpMode {
                 launcherServo.setPower(1);
             } else if (gamepad2.right_bumper) {
                 launcherServo.setPower(-1);
-            } else {
+            } else if (!(gamepad2.left_trigger > 0)){
                 launcherServo.setPower(0);
             }
 
-            if (gamepad2.a && spinnerActive) {
+            if (gamepad2.x) {
                 spinnerActive = false;
                 launcherMotor.setPower(0);
-            } else if (gamepad2.a && (!spinnerActive)) {
+            } else if (gamepad2.a) {
                 spinnerActive = true;
-                launcherMotor.setPower(1);
-            } else if (gamepad2.b) { //move backwards anytime, press a to stop
-                spinnerActive = true;
-                launcherMotor.setPower(-1);
+                launcherMotor.setPower(0.75);
+            }
+
+            if (gamepad2.b) {
+                flowerCatcher.setPosition(1);
+            } else if (gamepad2.y) {
+                flowerCatcher.setPosition(0);
             }
 
             // Telemetry
