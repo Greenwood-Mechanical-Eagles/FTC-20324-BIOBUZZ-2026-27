@@ -38,11 +38,11 @@ public class launchAuto extends LinearOpMode {
 
         //shoot ball
 
-        launcherMotor.setPower(0.75);
-        sleep(500);
+        launcherMotor.setPower(1);
+        sleep(1000);
 
         launcherServo.setPower(1);
-        sleep(500);
+        sleep(1000);
 
         launcherServo.setPower(0);
         launcherMotor.setPower(0);
@@ -63,13 +63,14 @@ public class launchAuto extends LinearOpMode {
         backLeftDrive.setPower(-power);
         backRightDrive.setPower(power);
 
-        sleep(750);
+        sleep(700);
         frontLeftDrive.setPower(0);
         frontRightDrive.setPower(0);
         backLeftDrive.setPower(0);
         backRightDrive.setPower(0);
 
-        runMotors(0,0,0,0,10, true);
+        runMotors(0,0,0,0,100, true);
+
     }
 
     public void runMotors(double a, double b, double c, double d, long time, boolean last) {
@@ -84,7 +85,10 @@ public class launchAuto extends LinearOpMode {
         backRightDrive.setPower(d);
         sleep(time);
         if (last) {
-
+            frontLeftDrive.setPower(0);
+            frontRightDrive.setPower(0);
+            backLeftDrive.setPower(0);
+            backRightDrive.setPower(0);
         }
 
     }
