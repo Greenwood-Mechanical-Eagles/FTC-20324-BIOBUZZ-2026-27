@@ -117,10 +117,10 @@ public class starterBotDrive extends LinearOpMode {
             //controls
 
             if (gamepad2.left_trigger > 0) {
-                intakeMotor.setPower(1);
+                intakeMotor.setPower(-1);
                 launcherServo.setPower(-1);
             } else if (gamepad2.right_trigger > 0) {
-                intakeMotor.setPower(-1);
+                intakeMotor.setPower(1);
             } else {
                 intakeMotor.setPower(0);
             }
