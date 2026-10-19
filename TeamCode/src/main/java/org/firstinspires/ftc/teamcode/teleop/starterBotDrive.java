@@ -65,7 +65,7 @@ public class starterBotDrive extends LinearOpMode {
 
         waitForStart();
 
-        double motorPower = 0.7;
+        double motorPower = 0.75;
 
         while (opModeIsActive()) {
 
@@ -139,11 +139,11 @@ public class starterBotDrive extends LinearOpMode {
             }
 
             if (gamepad1.a) {
-                motorPower = 0.8;
+                motorPower = 0.6;
             } else if (gamepad1.b) {
-                motorPower = 1;
+                motorPower = 0.9;
             } else if (gamepad1.x) {
-                motorPower = 0.7;
+                motorPower = 0.75;
             }
 
             if (gamepad2.x) {
