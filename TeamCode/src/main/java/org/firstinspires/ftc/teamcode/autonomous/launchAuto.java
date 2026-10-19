@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 
 @Autonomous(name = "Launching Auto for BioBuzz")
@@ -15,19 +16,33 @@ public class launchAuto extends LinearOpMode {
 //    DcMotor backLeftDrive = hardwareMap.get(DcMotor.class, "backLeftDrive");
 //        DcMotor backRightDrive = hardwareMap.get(DcMotor.class, "backRightDrive");
 
+    private DcMotor frontLeftDrive;
+    private DcMotor frontRightDrive;
+    private DcMotor backLeftDrive;
+    private DcMotor backRightDrive;
+
+    private CRServo launcherServo;
+
+    private DcMotor launcherMotor;
+
+    private DcMotor intakeMotor;
+
+    private Servo flowerCatcher;
+
     @Override
     public void runOpMode() {
 
 
 
         // Hardware mapping
-        DcMotor frontLeftDrive = hardwareMap.get(DcMotor.class, "frontLeftDrive");
-        DcMotor frontRightDrive = hardwareMap.get(DcMotor.class, "frontRightDrive");
-        DcMotor backLeftDrive = hardwareMap.get(DcMotor.class, "backLeftDrive");
-        DcMotor backRightDrive = hardwareMap.get(DcMotor.class, "backRightDrive");
+        frontLeftDrive = hardwareMap.get(DcMotor.class, "frontLeftDrive");
+        frontRightDrive = hardwareMap.get(DcMotor.class, "frontRightDrive");
+        backLeftDrive = hardwareMap.get(DcMotor.class, "backLeftDrive");
+        backRightDrive = hardwareMap.get(DcMotor.class, "backRightDrive");
 
-        DcMotor launcherMotor = hardwareMap.get(DcMotor.class, "outtakeMotor");
-        CRServo launcherServo = hardwareMap.get(CRServo.class, "outtakeServo");
+        launcherMotor = hardwareMap.get(DcMotor.class, "outtakeMotor");
+        launcherServo = hardwareMap.get(CRServo.class, "outtakeServo");
+
 
 
 

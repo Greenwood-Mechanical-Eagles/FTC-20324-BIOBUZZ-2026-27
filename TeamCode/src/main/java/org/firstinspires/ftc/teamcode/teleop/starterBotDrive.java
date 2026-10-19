@@ -65,6 +65,8 @@ public class starterBotDrive extends LinearOpMode {
 
         waitForStart();
 
+        double motorPower = 0.7;
+
         while (opModeIsActive()) {
 
             // Gamepad input
@@ -108,6 +110,9 @@ public class starterBotDrive extends LinearOpMode {
                 powerRR /= max;
             }
 
+
+
+
             // Set motor power
             frontLeftDrive.setPower(powerLF * driveCoefficient);
             frontRightDrive.setPower(powerRF * driveCoefficient);
@@ -133,12 +138,20 @@ public class starterBotDrive extends LinearOpMode {
                 launcherServo.setPower(0);
             }
 
+            if (gamepad1.a) {
+                motorPower = 0.8;
+            } else if (gamepad1.b) {
+                motorPower = 1;
+            } else if (gamepad1.x) {
+                motorPower = 0.7;
+            }
+
             if (gamepad2.x) {
                 spinnerActive = false;
                 launcherMotor.setPower(0);
             } else if (gamepad2.a) {
                 spinnerActive = true;
-                launcherMotor.setPower(0.75);
+                launcherMotor.setPower(motorPower);
             }
 
             if (gamepad2.b) {
