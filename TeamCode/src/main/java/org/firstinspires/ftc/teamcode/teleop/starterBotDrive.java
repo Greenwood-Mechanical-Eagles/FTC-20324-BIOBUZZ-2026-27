@@ -138,12 +138,12 @@ public class starterBotDrive extends LinearOpMode {
                 launcherServo.setPower(0);
             }
 
-            if (gamepad1.a) {
+            if (gamepad2.b) {
                 motorPower = 0.6;
-            } else if (gamepad1.b) {
+                launcherMotor.setPower(motorPower);
+            } else if (gamepad2.y) {
                 motorPower = 0.9;
-            } else if (gamepad1.x) {
-                motorPower = 0.75;
+                launcherMotor.setPower(motorPower);
             }
 
             if (gamepad2.x) {
@@ -151,12 +151,13 @@ public class starterBotDrive extends LinearOpMode {
                 launcherMotor.setPower(0);
             } else if (gamepad2.a) {
                 spinnerActive = true;
+                motorPower = 0.75;
                 launcherMotor.setPower(motorPower);
             }
 
-            if (gamepad2.b) {
+            if (gamepad1.dpad_up) { //b, y
                 flowerCatcher.setPosition(1);
-            } else if (gamepad2.y) {
+            } else if (gamepad1.dpad_down) {
                 flowerCatcher.setPosition(0);
             }
 

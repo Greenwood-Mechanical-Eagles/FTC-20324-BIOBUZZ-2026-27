@@ -53,16 +53,16 @@ public class launchAuto extends LinearOpMode {
 
         //shoot ball
 
-        launcherMotor.setPower(1);
-        sleep(3000);
+        launcherMotor.setPower(0.75);
+        sleep(2000);
 
         launcherServo.setPower(1);
-        sleep(3000);
+        sleep(2000);
 
         launcherServo.setPower(0);
         launcherMotor.setPower(0);
 
-        sleep(500);
+        sleep(700);
 
         // Corkscrew
         frontLeftDrive.setPower(power);
