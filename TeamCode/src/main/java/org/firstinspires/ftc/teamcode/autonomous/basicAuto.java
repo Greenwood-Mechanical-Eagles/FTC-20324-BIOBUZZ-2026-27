@@ -30,7 +30,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
             // Wait for the user to give input ready for autonomous
             waitForStart();
 
-            double power = .5;
+            //double power = .5; //
 
           runMotors(1,0,0,1,500,true);
 
