@@ -123,7 +123,7 @@ public class starterBotDrive extends LinearOpMode {
 
             if (gamepad2.left_trigger > 0) {
                 intakeMotor.setPower(-1);
-                launcherServo.setPower(-1);
+                //launcherServo.setPower(-1);
             } else if (gamepad2.right_trigger > 0) {
                 intakeMotor.setPower(1);
             } else {
@@ -139,10 +139,10 @@ public class starterBotDrive extends LinearOpMode {
             }
 
             if (gamepad2.b) {
-                motorPower = 0.6;
+                motorPower = -0.6;
                 launcherMotor.setPower(motorPower);
             } else if (gamepad2.y) {
-                motorPower = 0.9;
+                motorPower = -0.9;
                 launcherMotor.setPower(motorPower);
             }
 
@@ -151,7 +151,7 @@ public class starterBotDrive extends LinearOpMode {
                 launcherMotor.setPower(0);
             } else if (gamepad2.a) {
                 spinnerActive = true;
-                motorPower = 0.75;
+                motorPower = -0.70;
                 launcherMotor.setPower(motorPower);
             }
 
@@ -169,6 +169,7 @@ public class starterBotDrive extends LinearOpMode {
             telemetry.addData("RF", powerRF);
             telemetry.addData("LR", powerLR);
             telemetry.addData("RR", powerRR);
+            telemetry.addData("Intake Motor", intakeMotor.getPower());
             telemetry.update();
         }
     }
