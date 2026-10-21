@@ -65,6 +65,8 @@ public class starterBotDrive extends LinearOpMode {
 
         waitForStart();
 
+        double motorPower = 0.75;
+
         while (opModeIsActive()) {
 
             // Gamepad input
@@ -108,6 +110,9 @@ public class starterBotDrive extends LinearOpMode {
                 powerRR /= max;
             }
 
+
+
+
             // Set motor power
             frontLeftDrive.setPower(powerLF * driveCoefficient);
             frontRightDrive.setPower(powerRF * driveCoefficient);
@@ -117,10 +122,10 @@ public class starterBotDrive extends LinearOpMode {
             //controls
 
             if (gamepad2.left_trigger > 0) {
-                intakeMotor.setPower(1);
-                launcherServo.setPower(-1);
-            } else if (gamepad2.right_trigger > 0) {
                 intakeMotor.setPower(-1);
+                //launcherServo.setPower(-1);
+            } else if (gamepad2.right_trigger > 0) {
+                intakeMotor.setPower(1);
             } else {
                 intakeMotor.setPower(0);
             }
@@ -133,17 +138,26 @@ public class starterBotDrive extends LinearOpMode {
                 launcherServo.setPower(0);
             }
 
+            if (gamepad2.b) {
+                motorPower = -0.6;
+                launcherMotor.setPower(motorPower);
+            } else if (gamepad2.y) {
+                motorPower = -0.9;
+                launcherMotor.setPower(motorPower);
+            }
+
             if (gamepad2.x) {
                 spinnerActive = false;
                 launcherMotor.setPower(0);
             } else if (gamepad2.a) {
                 spinnerActive = true;
-                launcherMotor.setPower(439900/6000);
+                motorPower = -0.70;
+                launcherMotor.setPower(motorPower);
             }
 
-            if (gamepad2.b) {
+            if (gamepad1.dpad_up) { //b, y
                 flowerCatcher.setPosition(1);
-            } else if (gamepad2.y) {
+            } else if (gamepad1.dpad_down) {
                 flowerCatcher.setPosition(0);
             }
 
@@ -155,6 +169,7 @@ public class starterBotDrive extends LinearOpMode {
             telemetry.addData("RF", powerRF);
             telemetry.addData("LR", powerLR);
             telemetry.addData("RR", powerRR);
+            telemetry.addData("Intake Motor", intakeMotor.getPower());
             telemetry.update();
         }
     }
