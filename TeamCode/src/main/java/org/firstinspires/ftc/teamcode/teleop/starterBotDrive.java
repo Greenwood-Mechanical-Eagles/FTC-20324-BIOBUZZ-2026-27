@@ -139,10 +139,10 @@ public class starterBotDrive extends LinearOpMode {
             }
 
             if (gamepad2.b) {
-                motorPower = -0.5;
+                motorPower = -0.55; //launches from wall at high (12)
                 launcherMotor.setPower(motorPower);
             } else if (gamepad2.y) {
-                motorPower = -0.75;
+                motorPower = -0.75; //launches from corner / wall at medium (~11) batter
                 launcherMotor.setPower(motorPower);
             }
 
@@ -151,13 +151,13 @@ public class starterBotDrive extends LinearOpMode {
                 launcherMotor.setPower(0);
             } else if (gamepad2.a) {
                 spinnerActive = true;
-                motorPower = -0.60;
+                motorPower = -0.60; //launches from corner at high (12.4) battery
                 launcherMotor.setPower(motorPower);
             }
 
-            if (gamepad1.dpad_up) { //b, y
+            if (gamepad1.dpadUpWasPressed() == true) { //b, y
                 flowerCatcher.setPosition(1);
-            } else if (gamepad1.dpad_down) {
+            } else if (gamepad1.dpadDownWasPressed() == true) {
                 flowerCatcher.setPosition(0);
             }
 

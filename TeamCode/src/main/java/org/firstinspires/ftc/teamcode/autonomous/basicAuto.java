@@ -32,21 +32,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
             double power = .5;
 
-            // Corkscrew
-            frontLeftDrive.setPower(power);
-            frontRightDrive.setPower(power);
-            backLeftDrive.setPower(power);
-            backRightDrive.setPower(power);
-
-            sleep(1000);
-
-            // Move Backward
-            frontLeftDrive.setPower(power);
-            frontRightDrive.setPower(power);
-            backLeftDrive.setPower(-power);
-            backRightDrive.setPower(power);
+            runMotors(-1,-1,-1,-1,363,true); // move forward
 
             sleep(750);
+
+
             frontLeftDrive.setPower(0);
             frontRightDrive.setPower(0);
             backLeftDrive.setPower(0);
@@ -55,13 +45,23 @@ import com.qualcomm.robotcore.hardware.DcMotor;
            // runMotors(0,0,0,0);
         }
 
-        //public void runMotors(double a, double b, double c, double d) {
-            //double[] motorPowers = {a, b, c, d};
-            //DcMotor[] motors = {//frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive};
+        public void runMotors(double a, double b, double c, double d, long time, boolean last) {
+            DcMotor frontLeftDrive = hardwareMap.get(DcMotor.class, "frontLeftDrive");
+            DcMotor frontRightDrive = hardwareMap.get(DcMotor.class, "frontRightDrive");
+            DcMotor backLeftDrive = hardwareMap.get(DcMotor.class, "backLeftDrive");
+            DcMotor backRightDrive = hardwareMap.get(DcMotor.class, "backRightDrive");
 
-           // for (int g = 0; g<4; g++){
-                //motors[g].setPower(motorPowers[g]);
-           // }
-        //}
-                                //test stuff (needlessly complicated)
+            frontLeftDrive.setPower(a);
+            frontRightDrive.setPower(b);
+            backLeftDrive.setPower(-c); //account for reversed motor
+            backRightDrive.setPower(d);
+            sleep(time);
+            if (last) {
+                frontLeftDrive.setPower(0);
+                frontRightDrive.setPower(0);
+                backLeftDrive.setPower(0);
+                backRightDrive.setPower(0);
+            }
+
+        }                   //test stuff (needlessly complicated)
 }
