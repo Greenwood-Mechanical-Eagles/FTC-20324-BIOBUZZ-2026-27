@@ -139,10 +139,10 @@ public class starterBotDrive extends LinearOpMode {
             }
 
             if (gamepad2.b) {
-                motorPower = -0.6;
+                motorPower = -0.5;
                 launcherMotor.setPower(motorPower);
             } else if (gamepad2.y) {
-                motorPower = -0.9;
+                motorPower = -0.75;
                 launcherMotor.setPower(motorPower);
             }
 
@@ -151,7 +151,7 @@ public class starterBotDrive extends LinearOpMode {
                 launcherMotor.setPower(0);
             } else if (gamepad2.a) {
                 spinnerActive = true;
-                motorPower = -0.70;
+                motorPower = -0.60;
                 launcherMotor.setPower(motorPower);
             }
 
