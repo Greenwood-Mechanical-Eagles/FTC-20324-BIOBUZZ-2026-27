@@ -100,6 +100,14 @@ public class starterBotDrive extends LinearOpMode {
             double powerLR = tuningForward * Forward + (tuningTurn * Turn - tuningStrafe * Strafe);
             double powerRR = tuningForward * Forward - (tuningTurn * Turn - tuningStrafe * Strafe);
 
+            // If Right Bumper is set, reduce the power of the wheel motors by half
+            if (gamepad1.right_bumper){
+                powerLF /= 2;
+                powerRF /= 2;
+                powerLR /= 2;
+                powerRR /= 2;
+            }
+
             // Normalize powers (keeps values between -1 and 1)
             double max = Math.max(Math.abs(powerLF), Math.max(Math.abs(powerRF),
                 Math.max(Math.abs(powerLR), Math.abs(powerRR))));
@@ -160,6 +168,7 @@ public class starterBotDrive extends LinearOpMode {
             } else if (gamepad1.dpadDownWasPressed() == true) {
                 flowerCatcher.setPosition(0);
             }
+
 
             // Telemetry
             telemetry.addData("Forward", Forward);
