@@ -65,7 +65,7 @@ public class launchAuto extends LinearOpMode {
         sleep(700);
 
         //forward
-        runMotors(power,power,power,power,2500,false);
+        runMotors(power*4/4,power*4/4,power*4/5,power*4/4,2500,false);
 
         // Corkscrew
         frontLeftDrive.setPower(power * 3/4);
@@ -73,15 +73,15 @@ public class launchAuto extends LinearOpMode {
         backLeftDrive.setPower(power);
         backRightDrive.setPower(power);
 
-        sleep(1000);
+        sleep(800);
 
         // Move Backward
-        frontLeftDrive.setPower(power);
-        frontRightDrive.setPower(power);
-        backLeftDrive.setPower(-power);
-        backRightDrive.setPower(power);
+        frontLeftDrive.setPower(-power);
+        frontRightDrive.setPower(-power);
+        backLeftDrive.setPower(power*4/5);
+        backRightDrive.setPower(-power);
 
-        sleep(700);
+        sleep(3000);
         frontLeftDrive.setPower(0);
         frontRightDrive.setPower(0);
         backLeftDrive.setPower(0);
