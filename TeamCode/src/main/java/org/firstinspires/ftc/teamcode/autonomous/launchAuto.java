@@ -65,7 +65,7 @@ public class launchAuto extends LinearOpMode {
         sleep(700);
 
         //forward
-        runMotors(power,power,power,power,500,false);
+        runMotors(power,power,power,power,2500,false);
 
         // Corkscrew
         frontLeftDrive.setPower(power * 3/4);
