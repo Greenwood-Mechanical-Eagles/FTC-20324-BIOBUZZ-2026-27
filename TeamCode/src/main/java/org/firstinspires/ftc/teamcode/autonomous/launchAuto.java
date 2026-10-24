@@ -81,7 +81,7 @@ public class launchAuto extends LinearOpMode {
         backLeftDrive.setPower(-power);
         backRightDrive.setPower(power);
 
-        sleep(1500);
+        sleep(700);
         frontLeftDrive.setPower(0);
         frontRightDrive.setPower(0);
         backLeftDrive.setPower(0);
