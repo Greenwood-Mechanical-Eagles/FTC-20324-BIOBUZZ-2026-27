@@ -3,18 +3,14 @@ package org.firstinspires.ftc.teamcode.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-//import com.qualcomm.robotcore.hardware.CoreHex;
-
 
 @TeleOp(name = "Basic Drive for BioBuzz")
-
 public class basicDrive extends LinearOpMode {
 
     private DcMotor frontLeftDrive;
     private DcMotor frontRightDrive;
     private DcMotor backLeftDrive;
     private DcMotor backRightDrive;
-
 
     @Override
     public void runOpMode() {
@@ -25,12 +21,13 @@ public class basicDrive extends LinearOpMode {
         backLeftDrive = hardwareMap.get(DcMotor.class, "backLeftDrive");
         backRightDrive = hardwareMap.get(DcMotor.class, "backRightDrive");
 
-        // Reverse left side motors if needed
-        //frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-        //backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+        // Motor directions: tested and correct. Keep these the same in
+        // Starter Bot Drive and BasicAuto.
+        frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+        frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
         backRightDrive.setDirection(DcMotor.Direction.REVERSE);
 
-    // Brake mode: stop sharply instead of coasting
+        // Brake mode: stop sharply instead of coasting
         frontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -58,7 +55,7 @@ public class basicDrive extends LinearOpMode {
 
             // Normalize powers (keeps values between -1 and 1)
             double max = Math.max(Math.abs(powerLF), Math.max(Math.abs(powerRF),
-                Math.max(Math.abs(powerLR), Math.abs(powerRR))));
+                    Math.max(Math.abs(powerLR), Math.abs(powerRR))));
             if (max > 1.0) {
                 powerLF /= max;
                 powerRF /= max;
@@ -76,12 +73,9 @@ public class basicDrive extends LinearOpMode {
             telemetry.addData("Forward", Forward);
             telemetry.addData("Strafe", Strafe);
             telemetry.addData("Turn", Turn);
-            telemetry.addData("LF", powerLF);
-            telemetry.addData("RF", powerRF);
-            telemetry.addData("LR", powerLR);
-            telemetry.addData("RR", powerRR);
+            telemetry.addData("LF / RF", "%.2f / %.2f", powerLF, powerRF);
+            telemetry.addData("LR / RR", "%.2f / %.2f", powerLR, powerRR);
             telemetry.update();
         }
     }
-
 }
