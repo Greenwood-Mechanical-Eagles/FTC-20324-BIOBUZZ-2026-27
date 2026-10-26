@@ -32,7 +32,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
             double power = .5;
 
-            runMotors(-1,-1,-1,-1,363,true); // move forward
+            runMotors(-1,-1,-1,-1,250,true); // move forward
 
             sleep(750);
 
