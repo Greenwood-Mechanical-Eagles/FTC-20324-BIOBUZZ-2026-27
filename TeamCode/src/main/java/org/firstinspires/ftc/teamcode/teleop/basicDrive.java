@@ -40,6 +40,8 @@ public class basicDrive extends LinearOpMode {
 
         waitForStart();
 
+        //c.maunualBrakeMode.set(true)
+
         while (opModeIsActive()) {
 
             // Gamepad input
