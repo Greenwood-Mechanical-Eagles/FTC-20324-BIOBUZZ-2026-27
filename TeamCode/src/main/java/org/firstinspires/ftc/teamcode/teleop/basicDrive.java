@@ -38,6 +38,10 @@ public class basicDrive extends LinearOpMode {
         double tuningStrafe = 1.0;
         double tuningTurn = 1.0;
 
+        //precision values
+        double precisionMult = 1;
+        double forwardBackwardMult = 1;
+
         waitForStart();
 
         //c.maunualBrakeMode.set(true)
@@ -45,8 +49,8 @@ public class basicDrive extends LinearOpMode {
         while (opModeIsActive()) {
 
             // Gamepad input
-            double Forward = -gamepad1.left_stick_y;
-            double Strafe = gamepad1.left_stick_x;
+            double Forward = -gamepad1.left_stick_y * forwardBackwardMult;
+            double Strafe = gamepad1.left_stick_x * forwardBackwardMult;
             double Turn = gamepad1.right_stick_x;
 
             // Mecanum drive calculations
@@ -65,11 +69,23 @@ public class basicDrive extends LinearOpMode {
                 powerRR /= max;
             }
 
+
+            if (gamepad1.yWasPressed()) {
+                forwardBackwardMult = -forwardBackwardMult;
+            }
+
+            // Hold left trigger for slow, precise driving
+            if (gamepad1.left_trigger > 0) {
+                precisionMult = 0.5;
+            } else {
+                precisionMult = 1;
+            }
+
             // Set motor power
-            frontLeftDrive.setPower(powerLF);
-            frontRightDrive.setPower(powerRF);
-            backLeftDrive.setPower(powerLR);
-            backRightDrive.setPower(powerRR);
+            frontLeftDrive.setPower(powerLF * precisionMult);
+            frontRightDrive.setPower(powerRF * precisionMult);
+            backLeftDrive.setPower(powerLR * precisionMult);
+            backRightDrive.setPower(powerRR * precisionMult);
 
             // Telemetry
             telemetry.addData("Forward", Forward);
@@ -77,6 +93,7 @@ public class basicDrive extends LinearOpMode {
             telemetry.addData("Turn", Turn);
             telemetry.addData("LF / RF", "%.2f / %.2f", powerLF, powerRF);
             telemetry.addData("LR / RR", "%.2f / %.2f", powerLR, powerRR);
+            telemetry.addData("Current Power Mult (affects speed and direction)", precisionMult * forwardBackwardMult);
             telemetry.update();
         }
     }

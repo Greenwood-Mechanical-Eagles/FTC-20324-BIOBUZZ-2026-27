@@ -18,6 +18,7 @@ public class starterBotDrive extends LinearOpMode {
     private DcMotor launcherMotor;
     private DcMotor intakeMotor;
     private Servo flowerCatcher;
+    private  Servo rewolfCatcher; //other flower catcher, "rewolf" = "flower" b'wards
 
     @Override
     public void runOpMode() {
@@ -32,6 +33,7 @@ public class starterBotDrive extends LinearOpMode {
         launcherServo = hardwareMap.get(CRServo.class, "outtakeServo");
         intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
         flowerCatcher = hardwareMap.get(Servo.class, "flower");
+        rewolfCatcher = hardwareMap.get(Servo.class, "rewolf");
 
         // Motor directions: tested and correct. Keep these the same in BasicAuto.
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -135,8 +137,10 @@ public class starterBotDrive extends LinearOpMode {
 
             if (gamepad1.dpadUpWasPressed()) {
                 flowerCatcher.setPosition(1);
+                rewolfCatcher.setPosition(0);
             } else if (gamepad1.dpadDownWasPressed()) {
                 flowerCatcher.setPosition(0);
+                rewolfCatcher.setPosition(1);
             }
 
             // ----- TELEMETRY -----
