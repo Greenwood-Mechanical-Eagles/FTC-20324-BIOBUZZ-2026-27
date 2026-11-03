@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.pedro;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 
+import com.pedropathing.algorithm.Foresight;
 import com.pedropathing.revhub.drivetrains.Mecanum;
 import com.pedropathing.revhub.localizers.PinpointLocalizer;
 import com.pedropathing.tuning.autotune.Procedure;
@@ -28,7 +29,7 @@ public class Tuning {
     public static Procedure tests() {
         return new Tests(hardwareMap -> new Mecanum(hardwareMap, Constants.drivetrainConfig),
                 hardwareMap -> new PinpointLocalizer(hardwareMap, Constants.localizerConfig),
-                null);
+                () -> new Foresight(Constants.foresightConfig));
     }
 
     @Tuner
