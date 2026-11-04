@@ -53,7 +53,7 @@ public class launchAuto extends LinearOpMode {
 
         //shoot ball
 
-        launcherMotor.setPower(0.75);
+        launcherMotor.setPower(-0.5);
         sleep(2000);
 
         launcherServo.setPower(1);
@@ -64,21 +64,24 @@ public class launchAuto extends LinearOpMode {
 
         sleep(700);
 
+        //forward
+        runMotors(power*4/4,power*4/4,power*4/5,power*4/4,4000,false);
+
         // Corkscrew
-        frontLeftDrive.setPower(power);
+        frontLeftDrive.setPower(power * 3/4);
         frontRightDrive.setPower(power);
         backLeftDrive.setPower(power);
         backRightDrive.setPower(power);
 
-        sleep(1000);
+        sleep(750);
 
         // Move Backward
-        frontLeftDrive.setPower(power);
-        frontRightDrive.setPower(power);
-        backLeftDrive.setPower(-power);
-        backRightDrive.setPower(power);
+        frontLeftDrive.setPower(-power);
+        frontRightDrive.setPower(-power);
+        backLeftDrive.setPower(power*4/5);
+        backRightDrive.setPower(-power);
 
-        sleep(700);
+        sleep(2500);
         frontLeftDrive.setPower(0);
         frontRightDrive.setPower(0);
         backLeftDrive.setPower(0);

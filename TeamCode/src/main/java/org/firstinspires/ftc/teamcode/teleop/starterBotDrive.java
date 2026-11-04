@@ -5,11 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
-//import com.qualcomm.robotcore.hardware.CoreHex;
-
 
 @TeleOp(name = "Starter Bot Drive")
-
 public class starterBotDrive extends LinearOpMode {
 
     private DcMotor frontLeftDrive;
@@ -18,13 +15,10 @@ public class starterBotDrive extends LinearOpMode {
     private DcMotor backRightDrive;
 
     private CRServo launcherServo;
-
     private DcMotor launcherMotor;
-
     private DcMotor intakeMotor;
-
     private Servo flowerCatcher;
-
+    private  Servo rewolfCatcher; //other flower catcher, "rewolf" = "flower" b'wards
 
     @Override
     public void runOpMode() {
@@ -37,62 +31,54 @@ public class starterBotDrive extends LinearOpMode {
 
         launcherMotor = hardwareMap.get(DcMotor.class, "outtakeMotor");
         launcherServo = hardwareMap.get(CRServo.class, "outtakeServo");
-
         intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
-
         flowerCatcher = hardwareMap.get(Servo.class, "flower");
+        rewolfCatcher = hardwareMap.get(Servo.class, "rewolf");
 
-
-        // Reverse left side motors if needed
+        // Motor directions: tested and correct. Keep these the same in BasicAuto.
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
-        //backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         backRightDrive.setDirection(DcMotor.Direction.REVERSE);
 
+        // Brake mode: stop sharply instead of coasting
+        frontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Tuning values
         double tuningForward = 1.0;
         double tuningStrafe = 1.0;
         double tuningTurn = 1.0;
 
-        // Drive multiplier values
-        double forwardBackwardMult = 1;
-        double precisionMult = 1;
-        boolean movingForward = true;
-
-        //boolean for launcher
-        boolean spinnerActive = false;
+        // Drive mode values
+        double forwardBackwardMult = 1;   // 1 = normal, -1 = reversed (Y button)
+        double precisionMult = 1;         // 0.5 while left trigger is held
 
         waitForStart();
 
-        double motorPower = 0.75;
-
         while (opModeIsActive()) {
 
-            // Gamepad input
-            double Forward = -gamepad1.left_stick_y;
-            double Strafe = gamepad1.left_stick_x;
-            double Turn = gamepad1.right_stick_x;
+            // ----- DRIVE MODES -----
 
-            double driveCoefficient = forwardBackwardMult * precisionMult;
-
-            if (gamepad1.y) {
-                if (movingForward) {
-                    movingForward = false;
-                    forwardBackwardMult = -1;
-                } else {
-                    movingForward = true;
-                    forwardBackwardMult = 1;
-                }
+            // Y toggles reverse driving once per press
+            if (gamepad1.yWasPressed()) {
+                forwardBackwardMult = -forwardBackwardMult;
             }
 
+            // Hold left trigger for slow, precise driving
             if (gamepad1.left_trigger > 0) {
                 precisionMult = 0.5;
             } else {
                 precisionMult = 1;
             }
 
+            // ----- DRIVE -----
 
+            // Reverse mode flips forward and strafe, but NOT turning
+            double Forward = -gamepad1.left_stick_y * forwardBackwardMult;
+            double Strafe = gamepad1.left_stick_x * forwardBackwardMult;
+            double Turn = gamepad1.right_stick_x;
 
             // Mecanum drive calculations
             double powerLF = tuningForward * Forward + (tuningTurn * Turn + tuningStrafe * Strafe);
@@ -102,7 +88,7 @@ public class starterBotDrive extends LinearOpMode {
 
             // Normalize powers (keeps values between -1 and 1)
             double max = Math.max(Math.abs(powerLF), Math.max(Math.abs(powerRF),
-                Math.max(Math.abs(powerLR), Math.abs(powerRR))));
+                    Math.max(Math.abs(powerLR), Math.abs(powerRR))));
             if (max > 1.0) {
                 powerLF /= max;
                 powerRF /= max;
@@ -110,68 +96,62 @@ public class starterBotDrive extends LinearOpMode {
                 powerRR /= max;
             }
 
+            frontLeftDrive.setPower(powerLF * precisionMult);
+            frontRightDrive.setPower(powerRF * precisionMult);
+            backLeftDrive.setPower(powerLR * precisionMult);
+            backRightDrive.setPower(powerRR * precisionMult);
 
-
-
-            // Set motor power
-            frontLeftDrive.setPower(powerLF * driveCoefficient);
-            frontRightDrive.setPower(powerRF * driveCoefficient);
-            backLeftDrive.setPower(powerLR * driveCoefficient);
-            backRightDrive.setPower(powerRR * driveCoefficient);
-
-            //controls
+            // ----- INTAKE (gamepad 2 triggers) -----
 
             if (gamepad2.left_trigger > 0) {
                 intakeMotor.setPower(-1);
-                //launcherServo.setPower(-1);
             } else if (gamepad2.right_trigger > 0) {
                 intakeMotor.setPower(1);
             } else {
                 intakeMotor.setPower(0);
             }
 
+            // ----- FEEDER SERVO (gamepad 2 bumpers) -----
+
             if (gamepad2.left_bumper) {
                 launcherServo.setPower(1);
             } else if (gamepad2.right_bumper) {
                 launcherServo.setPower(-1);
-            } else if (!(gamepad2.left_trigger > 0)){
+            } else {
                 launcherServo.setPower(0);
             }
 
+            // ----- LAUNCHER (gamepad 2 buttons) -----
+
             if (gamepad2.b) {
-                motorPower = -0.6;
-                launcherMotor.setPower(motorPower);
+                launcherMotor.setPower(-0.55);   // from wall, high battery (12)
             } else if (gamepad2.y) {
-                motorPower = -0.9;
-                launcherMotor.setPower(motorPower);
-            }
-
-            if (gamepad2.x) {
-                spinnerActive = false;
-                launcherMotor.setPower(0);
+                launcherMotor.setPower(-0.75);   // corner / wall, medium battery (~11)
             } else if (gamepad2.a) {
-                spinnerActive = true;
-                motorPower = -0.70;
-                launcherMotor.setPower(motorPower);
+                launcherMotor.setPower(-0.60);   // from corner, high battery (12.4)
+            } else if (gamepad2.x) {
+                launcherMotor.setPower(0);       // stop launcher
             }
 
-            if (gamepad1.dpad_up) { //b, y
+            // ----- FLOWER CATCHER (gamepad 1 D-pad) -----
+
+            if (gamepad1.dpadUpWasPressed()) {
                 flowerCatcher.setPosition(1);
-            } else if (gamepad1.dpad_down) {
+                rewolfCatcher.setPosition(0);
+            } else if (gamepad1.dpadDownWasPressed()) {
                 flowerCatcher.setPosition(0);
+                rewolfCatcher.setPosition(1);
             }
 
-            // Telemetry
-            telemetry.addData("Forward", Forward);
-            telemetry.addData("Strafe", Strafe);
-            telemetry.addData("Turn", Turn);
-            telemetry.addData("LF", powerLF);
-            telemetry.addData("RF", powerRF);
-            telemetry.addData("LR", powerLR);
-            telemetry.addData("RR", powerRR);
-            telemetry.addData("Intake Motor", intakeMotor.getPower());
+            // ----- TELEMETRY -----
+
+            telemetry.addData("Drive mode", forwardBackwardMult > 0 ? "NORMAL" : "REVERSED");
+            telemetry.addData("Slow mode", precisionMult < 1 ? "ON" : "OFF");
+            telemetry.addData("LF / RF", "%.2f / %.2f", powerLF, powerRF);
+            telemetry.addData("LR / RR", "%.2f / %.2f", powerLR, powerRR);
+            telemetry.addData("Launcher power", launcherMotor.getPower());
+            telemetry.addData("Intake power", intakeMotor.getPower());
             telemetry.update();
         }
     }
-
 }
