@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 //import com.qualcomm.robotcore.hardware.CoreHex;
 
 
-@TeleOp(name = "Basic Drive for BioBuzz")
+@TeleOp(name = "Basic Drive for BioBuzz - for 555555")
 
 public class basicDrive extends LinearOpMode {
 
@@ -26,7 +26,7 @@ public class basicDrive extends LinearOpMode {
         backRightDrive = hardwareMap.get(DcMotor.class, "backRightDrive");
 
         // Reverse left side motors if needed
-        //frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+        frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         //backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         backRightDrive.setDirection(DcMotor.Direction.REVERSE);
 
