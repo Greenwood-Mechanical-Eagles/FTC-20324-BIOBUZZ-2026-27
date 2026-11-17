@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
-import static android.os.SystemClock.sleep;
-
 import com.pedropathing.api.Paths;
 
 import com.pedropathing.api.PoseFactory;
@@ -14,6 +12,7 @@ import static com.pedropathing.ivy.Scheduler.schedule;
 import static com.pedropathing.ivy.groups.Groups.sequential;
 import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -21,8 +20,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 
+@Disabled
 @Autonomous(name = "AutoPath", group = "Autonomous")
-public class FirstPedroAuto extends OpMode {
+public class FirstPedroAuto extends LinearOpMode {
 
     private Follower follower;
 
@@ -31,21 +31,13 @@ public class FirstPedroAuto extends OpMode {
     private final Pose start = poseFactory.of(83.8934, 134.9426, 90);
     private final Pose startToOtherSide = poseFactory.of(82.8707, 23.4222, 180);
     private final Pose toPark = poseFactory.of(137.3504, 24.2483, -179.1313);
-    //private DcMotor launcherMotor;
+    private DcMotor launcherMotor;
 
-   // private CRServo launcherServo;
+    private CRServo launcherServo;
 
-    private DcMotor launcherMotor = hardwareMap.get(DcMotor.class, "outtakeMotor");
-    private CRServo launcherServo = hardwareMap.get(CRServo.class, "outtakeServo");
+    boolean doneThing;
 
 
-    public Path startToOtherSide() {
-        return Paths.line(start, startToOtherSide).linear(start, startToOtherSide);
-    }
-
-    public Path toPark() {
-        return Paths.line(startToOtherSide, toPark).reverseTangent();
-    }
 
 
     // Autonomous routine
@@ -56,7 +48,7 @@ public class FirstPedroAuto extends OpMode {
         return null;
     } */
 
-
+    /*
     public Command launchBall() {
         return Command.build()
                 .setExecute(() -> {
@@ -69,44 +61,67 @@ public class FirstPedroAuto extends OpMode {
                 launcherMotor.setPower(0);
                 launcherServo.setPower(0);
                 });
-    }
+    } */
+
+    Command launchBall = Command.build()
+            .setStart(() -> {
+                doneThing = false;
+            })
+            .setExecute(() -> {
+                launcherMotor.setPower(-0.75);
+                sleep(3000);
+
+                launcherServo.setPower(1);
+                sleep(2000);
+
+                launcherMotor.setPower(0);
+                launcherServo.setPower(0);
+            })
+           /* .setDone(() -> {
+                return doneThing = true;
+            }) */
+            .setEnd(endCondition -> {
+                // executed on end
+            })
+            .requiring(launcherMotor, launcherServo);
 
     public Command autoRoutine() {
         return sequential(
                 //startWait(),
-                launchBall(),
+                //command for launching ball goes here?
                 follow(follower, startToOtherSide()),
                 follow(follower, toPark())
         );
     }
 
     @Override
-    public void init() {
+    public void runOpMode() {
 
         //hardware mapping
+        launcherMotor = hardwareMap.get(DcMotor.class, "outtakeMotor");
+        launcherServo = hardwareMap.get(CRServo.class, "outtakeServo");
+
         //contain chunk within init() function?
-            Scheduler.reset();
-            follower = Constants.create(hardwareMap);
-            follower.setPose(start);
-            follower.update();
-        }
 
-
-    //put this stuff outside the function or maybe still here in the in-between space if that works
+        //put this stuff outside the function or maybe still here in the in-between space if that works
 
             //public Command startWait() {
-           // waitForStart();
+            waitForStart();
              //return;
             //}
 
-        @Override
-        public void start() {
-            schedule(autoRoutine());
-        }
+        launcherMotor.setPower(-0.7);
+        sleep(2000);
 
+        launcherServo.setPower(1);
+        sleep(2000);
 
-        @Override
-        public void loop() {
+        launcherMotor.setPower(0);
+        launcherServo.setPower(0);
+
+        schedule(autoRoutine());
+
+        while (opModeIsActive()) {
             follower.update();
             Scheduler.execute();
 
@@ -124,12 +139,12 @@ public class FirstPedroAuto extends OpMode {
             telemetry.update();
         }
     }
-/*
+
     public Path startToOtherSide() {
         return Paths.line(start, startToOtherSide).linear(start, startToOtherSide);
     }
 
     public Path toPark() {
         return Paths.line(startToOtherSide, toPark).reverseTangent();
-    } */
-
+    }
+}

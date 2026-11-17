@@ -6,14 +6,18 @@ import com.pedropathing.math.Pose;
 import com.pedropathing.paths.Path;
 
 public class BioBuzzPaths {
-
+    // Internal Properties
     private final PoseFactory poseFactory = PoseFactory.degrees();
 
-    public final Pose nonShooting1 = poseFactory.of(137.0047, 54.8982, 90);
-    private final Pose myFirstPath = poseFactory.of(104.8344, 127.7687, 90);
+    // Public Positions - IE Starting Positions
+    public final Pose testStartPositionX = poseFactory.of(130.75, 118.75, 180);
 
-    public Path myFirstPath() {
-        return Paths.line(nonShooting1, myFirstPath).linear(nonShooting1, myFirstPath);
+    // Private Positions - IE Not Starting Positions
+    private final Pose xMovementTest = poseFactory.of(94.75, 118.75, 180);
+
+
+    public Path xMovementTest() {
+        return Paths.line(testStartPositionX, xMovementTest).linear(testStartPositionX, xMovementTest);
     }
 }
 
