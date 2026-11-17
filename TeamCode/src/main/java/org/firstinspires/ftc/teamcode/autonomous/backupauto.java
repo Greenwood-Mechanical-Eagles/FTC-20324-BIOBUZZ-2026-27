@@ -30,7 +30,7 @@ public class backupauto extends OpMode {
     // private final PoseFactory poseFactory = PoseFactory.degrees();
 
     private final Pose start = poseFactory.of(128.7987, 7.0471, -90);
-    private final Pose path1 = poseFactory.of(128.6081, 24.3751, 180);
+    private final Pose path1 = poseFactory.of(128.6081, 24.3751, -90);
 
     public Path path1() {
         return Paths.line(start, path1).linear(start, path1);
