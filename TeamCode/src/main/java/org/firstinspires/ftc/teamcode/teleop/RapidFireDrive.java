@@ -20,9 +20,9 @@ public class RapidFireDrive extends LinearOpMode {
     // so these match the old power settings (power x 3900).
     // Fine-tune on the field with gamepad2 D-pad up/down and "Flywheel RPM" telemetry.
     // Keep every preset under ~3500 RPM or the motor can't hold it during a volley.
-    static final double WALL_RPM   = 2600;  // B  (tested)
-    static final double CORNER_RPM = 2400;  // A  (tested)
-    static final double FAR_RPM    = 3400;  // Y  (tested)
+    static final double WALL_RPM   = 2800;  // B  wall shot (tested)
+    static final double LINE_RPM   = 2600;  // A  line shot (tested)
+    static final double CORNER_RPM = 3600;  // Y  corner shot (tested)
     static final double RPM_STEP   = 100;    // D-pad up/down adjustment
 
     // Flywheel PIDF: replace with the numbers from "Flywheel PIDF Tuner".
@@ -168,9 +168,9 @@ public class RapidFireDrive extends LinearOpMode {
             if (gamepad2.bWasPressed()) {
                 targetRPM = WALL_RPM;
             } else if (gamepad2.aWasPressed()) {
-                targetRPM = CORNER_RPM;
+                targetRPM = LINE_RPM;
             } else if (gamepad2.yWasPressed()) {
-                targetRPM = FAR_RPM;
+                targetRPM = CORNER_RPM;
             } else if (gamepad2.xWasPressed()) {
                 targetRPM = 0;
             }
