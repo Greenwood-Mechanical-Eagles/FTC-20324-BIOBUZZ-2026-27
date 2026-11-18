@@ -21,7 +21,7 @@ public class RapidFireDrive extends LinearOpMode {
     // Fine-tune on the field with gamepad2 D-pad up/down and "Flywheel RPM" telemetry.
     // Keep every preset under ~3500 RPM or the motor can't hold it during a volley.
     static final double WALL_RPM   = 2800;  // B  wall shot (tested)
-    static final double LINE_RPM   = 2600;  // A  line shot (tested)
+    static final double LINE_RPM   = 2500;  // A  line shot (tested)
     static final double CORNER_RPM = 3600;  // Y  corner shot (tested)
     static final double RPM_STEP   = 100;    // D-pad up/down adjustment
 
