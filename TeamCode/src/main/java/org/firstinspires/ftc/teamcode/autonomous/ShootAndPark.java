@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
-import static android.os.SystemClock.sleep;
-
 import com.pedropathing.api.Paths;
 
 import com.pedropathing.api.PoseFactory;
@@ -21,10 +19,11 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.autonomous.util.ShootBallCommandBuilder;
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 
-@Autonomous(name = "AutoPath", group = "Autonomous")
-public class FirstPedroAuto extends OpMode {
+@Autonomous(name = "Shoots ball, and then parks", group = "Autonomous")
+public class ShootAndPark extends OpMode {
 
     private Follower follower;
 
@@ -33,12 +32,10 @@ public class FirstPedroAuto extends OpMode {
     private final Pose start = poseFactory.of(83.8934, 134.9426, 90);
     private final Pose startToOtherSide = poseFactory.of(82.8707, 23.4222, 180);
     private final Pose toPark = poseFactory.of(137.3504, 24.2483, -179.1313);
-    //private DcMotor launcherMotor;
-
-    // private CRServo launcherServo;
 
     private final DcMotor launcherMotor = hardwareMap.get(DcMotor.class, "outtakeMotor");
     private final CRServo launcherServo = hardwareMap.get(CRServo.class, "outtakeServo");
+    private ShootBallCommandBuilder shootBallCommandBuilder;
 
 
     public Path startToOtherSide() {
@@ -50,38 +47,10 @@ public class FirstPedroAuto extends OpMode {
     }
 
 
-    // Autonomous routine
-
-    /*public Command startWait() {
-        waitForStart();
-        //return;
-        return null;
-    } */
-
-
-    private ElapsedTime launchBallElapsedTime = new ElapsedTime();
-    public Command launchBall() {
-        return Command.build()
-                // When this starts make sure the timer is starting from Fresh
-                .setStart(() -> launchBallElapsedTime.reset())
-                // The actions that this command will do
-                .setExecute(() -> {
-                    launcherMotor.setPower(-0.75);
-                    if (launchBallElapsedTime.milliseconds() > 3000) launcherServo.setPower(1);
-
-                })
-                // A statement to evaluate if the command should be considered done
-                .setDone(() -> launchBallElapsedTime.milliseconds() > 5000)
-                // Handles what should happen if the program is forced to stop unexpectantly
-                .setEnd((interrupted) -> {
-                    launcherMotor.setPower(0);
-                    launcherServo.setPower(0);
-                });
-    }
 
     public Command autoRoutine() {
         return sequential(
-                launchBall(),
+                shootBallCommandBuilder.launchBall(),
                 follow(follower, startToOtherSide()),
                 follow(follower, toPark())
         );
@@ -89,6 +58,7 @@ public class FirstPedroAuto extends OpMode {
 
     @Override
     public void init() {
+        shootBallCommandBuilder = new ShootBallCommandBuilder(launcherMotor, launcherServo);
 
         //hardware mapping
         //contain chunk within init() function?

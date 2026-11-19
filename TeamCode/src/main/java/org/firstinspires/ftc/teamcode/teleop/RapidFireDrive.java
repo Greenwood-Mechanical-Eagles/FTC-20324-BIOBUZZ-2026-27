@@ -20,18 +20,18 @@ public class RapidFireDrive extends LinearOpMode {
     // so these match the old power settings (power x 3900).
     // Fine-tune on the field with gamepad2 D-pad up/down and "Flywheel RPM" telemetry.
     // Keep every preset under ~3500 RPM or the motor can't hold it during a volley.
-    static final double WALL_RPM   = 2800;  // B  wall shot (tested)
-    static final double LINE_RPM   = 2500;  // A  line shot (tested)
+    static final double WALL_RPM = 2800;  // B  wall shot (tested)
+    static final double LINE_RPM = 2600;  // A  line shot (tested)
     static final double CORNER_RPM = 3600;  // Y  corner shot (tested)
-    static final double RPM_STEP   = 100;    // D-pad up/down adjustment
+    static final double RPM_STEP = 100;    // D-pad up/down adjustment
 
     // Flywheel PIDF: replace with the numbers from "Flywheel PIDF Tuner".
     // (I is always P/10, D stays 0.)
-    static final double LAUNCHER_F = 18.0;   // tuned
+    static final double LAUNCHER_F = 16.0;   // tuned
     static final double LAUNCHER_P = 1.75;   // tuned
 
     // How close (in RPM) the flywheel must be to its target before feeding
-    static final double RPM_TOLERANCE = 150;
+    static final double RPM_TOLERANCE = 50;
 
     // Once a volley starts, keep feeding unless the wheel drops this far below
     // target (so it doesn't stop-and-start between every pollen).
@@ -185,11 +185,13 @@ public class RapidFireDrive extends LinearOpMode {
             }
 
             double currentRPM = launcherMotor.getVelocity() * 60.0 / TICKS_PER_REV;
+            boolean atSpeed = false;
+            boolean wantBoost = false;
 
             // BOOST: far below target, use RAW full power (no speed control).
             // Raw power avoids "wind-up" in the hub's controller, which was
             // causing the big overshoot and slow settle.
-            boolean wantBoost = targetRPM > 0 && currentRPM < targetRPM - BOOST_WINDOW_RPM;
+            wantBoost = targetRPM > 0 && currentRPM < targetRPM - BOOST_WINDOW_RPM;
             if (wantBoost != boosting) {
                 launcherMotor.setMode(wantBoost
                         ? DcMotor.RunMode.RUN_WITHOUT_ENCODER
@@ -212,8 +214,9 @@ public class RapidFireDrive extends LinearOpMode {
                 launcherMotor.setPower(0);
             }
 
-            boolean atSpeed = targetRPM > 0
+            atSpeed = targetRPM > 0
                     && Math.abs(currentRPM - targetRPM) <= RPM_TOLERANCE;
+
 
             // ----- RAPID FIRE FEEDER (gamepad 2 bumpers) -----
             // HOLD LEFT bumper = fire. The feeder only runs while the flywheel
@@ -250,7 +253,7 @@ public class RapidFireDrive extends LinearOpMode {
 
             // Short rumble on gamepad 2 when the flywheel first reaches speed
             if (atSpeed && !wasAtSpeed && !firing) {
-                gamepad2.rumble(200);
+                gamepad2.rumble(2000);
             }
             wasAtSpeed = atSpeed;
 
@@ -288,6 +291,7 @@ public class RapidFireDrive extends LinearOpMode {
             telemetry.addData("LF / RF", "%.2f / %.2f", powerLF, powerRF);
             telemetry.addData("LR / RR", "%.2f / %.2f", powerLR, powerRR);
             telemetry.addData("Intake power", intakeMotor.getPower());
+            telemetry.addData("Flywheel Wants Boost", wantBoost);
             telemetry.update();
         }
     }
