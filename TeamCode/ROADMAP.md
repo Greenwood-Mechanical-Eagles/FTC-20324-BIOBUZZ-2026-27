@@ -11,7 +11,7 @@ Give students building blocks that do about 90% of the work, so each student can
 | File | Type | Status |
 | --- | --- | --- |
 | `teleop/RapidFireDrive` | TeleOp | Tested. RPM flywheel presets, rapid fire, intake, flower catcher |
-| `teleop/FlywheelPIDFTuner` | Tuning | P = 1.75, F = 18 |
+| `teleop/FlywheelPIDFTuner` | Tuning | Tunes P and F. Team values: P = 1.75, F = 16 (the tuner's starting F is still 18) |
 | `autonomous/ShootAndPark` | Auto (Pedro) | Crashes on INIT (`hardwareMap` used too early) |
 | `autonomous/backupauto` | Auto (Pedro) | Simple park, about 17 in. |
 | `autonomous/launchAuto` | Auto (timed) | Old `sleep()` style; retire later |
@@ -62,6 +62,7 @@ The main problem today: TeleOp shoots by RPM and Auto shoots by raw power, so th
 
 - [ ] Each student lays out a path in the Pedro Visualizer, exports it, and builds an Auto in their own folder
 - [ ] One or more students build a TeleOp variant (one-driver layout, auto-fire when READY, field-centric, hold-position)
+- [ ] Students tune and choose the shot presets (`ShotPreset`), ready tolerance and rumble on the field, and record what they picked and why
 - [ ] Peer review in pairs, then coach review before anything moves to `competition/`
 
 ### Phase 3: Score more in Auto

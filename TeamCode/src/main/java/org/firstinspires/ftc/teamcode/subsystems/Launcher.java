@@ -29,7 +29,7 @@ public class Launcher {
 
     // Flywheel PIDF from "Flywheel PIDF Tuner" (I is always P/10, D stays 0).
     public static double P = 1.75;
-    public static double F = 18.0;
+    public static double F = 16.0;
 
     // How close (RPM) to target counts as "at speed" / READY.
     public static double RPM_TOLERANCE = 50;

@@ -7,15 +7,14 @@ Last updated: 2026-11-21
 ## Decisions (coach)
 
 - [ ] Agree on the architecture: `Robot` owns the Pedro follower, launcher, intake and flower catcher; Auto uses `RobotCommands`
-- [ ] Pick the launcher numbers. The two copies of `RapidFireDrive.java` disagree:
+- [x] Flywheel PIDF: **P = 1.75, F = 16**. This is the correct value (matches `teleop/RapidFireDrive.java`). The shared `Launcher` uses these. `FlywheelPIDFTuner` and the extra `RapidFireDrive.java` in the project root still say F = 18 and should be updated to match.
+- [ ] Shot presets, ready tolerance and rumble are **for the students to tinker with and choose** (see ROADMAP Phase 2). Starting points from the two copies of `RapidFireDrive.java`:
 
-  | Setting | `teleop/RapidFireDrive.java` | `RapidFireDrive.java` (project root) | `FlywheelPIDFTuner.java` |
-  | --- | --- | --- | --- |
-  | P | 1.75 | 1.75 | 1.75 |
-  | F | 16 | 18 | 18 |
-  | Wall / Line / Corner RPM | 2800 / 2600 / 3600 | 2600 / 2400 / 3400 | n/a |
-  | Ready tolerance | ±50 RPM | ±150 RPM | n/a |
-  | Ready rumble | 2000 ms | 200 ms | n/a |
+  | Setting | `teleop/RapidFireDrive.java` | `RapidFireDrive.java` (project root) |
+  | --- | --- | --- |
+  | Wall / Line / Corner RPM | 2800 / 2600 / 3600 | 2600 / 2400 / 3400 |
+  | Ready tolerance | ±50 RPM | ±150 RPM |
+  | Ready rumble | 2000 ms | 200 ms |
 
 - [ ] Pick the one team branch (`leslie-coach` or `tking/Working`)
 - [ ] Confirm the student list (folders so far: `ethan`, `ryder`)
