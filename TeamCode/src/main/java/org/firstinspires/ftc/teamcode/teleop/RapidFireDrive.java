@@ -185,8 +185,8 @@ public class RapidFireDrive extends LinearOpMode {
             }
 
             double currentRPM = launcherMotor.getVelocity() * 60.0 / TICKS_PER_REV;
-            boolean atSpeed = false;
-            boolean wantBoost = false;
+            boolean atSpeed;
+            boolean wantBoost;
 
             // BOOST: far below target, use RAW full power (no speed control).
             // Raw power avoids "wind-up" in the hub's controller, which was

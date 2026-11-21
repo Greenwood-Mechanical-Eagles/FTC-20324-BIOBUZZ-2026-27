@@ -17,9 +17,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.autonomous.util.ShootBallCommandBuilder;
+import org.firstinspires.ftc.teamcode.autonomous.commands.ShootBallCommand;
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 
 @Autonomous(name = "Shoots ball, and then parks", group = "Autonomous")
@@ -35,7 +34,7 @@ public class ShootAndPark extends OpMode {
 
     private final DcMotor launcherMotor = hardwareMap.get(DcMotor.class, "outtakeMotor");
     private final CRServo launcherServo = hardwareMap.get(CRServo.class, "outtakeServo");
-    private ShootBallCommandBuilder shootBallCommandBuilder;
+    private ShootBallCommand shootBallCommand;
 
 
     public Path startToOtherSide() {
@@ -50,7 +49,7 @@ public class ShootAndPark extends OpMode {
 
     public Command autoRoutine() {
         return sequential(
-                shootBallCommandBuilder.launchBall(),
+                shootBallCommand.execute(),
                 follow(follower, startToOtherSide()),
                 follow(follower, toPark())
         );
@@ -58,7 +57,7 @@ public class ShootAndPark extends OpMode {
 
     @Override
     public void init() {
-        shootBallCommandBuilder = new ShootBallCommandBuilder(launcherMotor, launcherServo);
+        shootBallCommand = new ShootBallCommand(launcherMotor, launcherServo);
 
         //hardware mapping
         //contain chunk within init() function?
@@ -68,13 +67,6 @@ public class ShootAndPark extends OpMode {
         follower.update();
     }
 
-
-    //put this stuff outside the function or maybe still here in the in-between space if that works
-
-    // public Command startWait() {
-    // waitForStart();
-    // return;
-    //}
 
     @Override
     public void start() {
