@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.autonomous;
+package org.firstinspires.ftc.teamcode.competition;
 
 import com.pedropathing.api.Paths;
 
@@ -16,8 +16,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 
-@Autonomous(name = "BackupAutoPark", group = "Autonomous")
-public class BackupAutoPark extends OpMode {
+@Autonomous(name = "2 - BackupPark (field tested)", group = "A Competition")
+public class BackupPark extends OpMode {
 
     private Follower follower;  
 

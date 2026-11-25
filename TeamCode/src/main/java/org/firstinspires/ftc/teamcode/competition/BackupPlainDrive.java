@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.teleop;
+package org.firstinspires.ftc.teamcode.competition;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -7,8 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "Rapid Fire Drive")
-public class RapidFireDrive extends LinearOpMode {
+@TeleOp(name = "9 - BACKUP Plain Drive (no odometry)", group = "Z Backup")
+public class BackupPlainDrive extends LinearOpMode {
 
     // ===================== LAUNCHER SETTINGS =====================
     // Flywheel motor: REV HD Hex with UltraPlanetary, NO cartridges (1:1).
