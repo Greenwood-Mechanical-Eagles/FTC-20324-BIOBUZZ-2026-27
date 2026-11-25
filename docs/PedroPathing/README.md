@@ -107,22 +107,41 @@ Still confirm it on a stand. 282.8 is derived from the HIVE as *drawn*, and
 those shapes remain hand-placed. Put the robot on the shoot pose, fire, rotate
 by hand until it scores, and read the heading off telemetry.
 
-## Worth relaying the path: the robot now turns 167° on the spot
+## The Auto is one motion: reverse, shoot, reverse to park
 
-This is the cost of fixing the aim without touching the path. The start pose
-faces 90° and the shoot pose now faces 282.8°, so the robot drives 23 in up the
-field and rotates **167°** on arrival. It works, but it is slow and it is not
-how anyone would lay this out on purpose.
+The robot is **placed on the start tile already facing `START_HEADING`** with its
+shooter pointing up the field at the HIVE, and it never turns again. All three
+segments use `constant()` rather than `tangent()` / `reverseTangent()`, because
+tangent headings rotate the robot to follow the direction of travel — exactly
+what you don't want when the shooter is bolted to the back.
 
-The tidy fix is in the Visualizer, not the code: **have the robot start facing
-roughly 282.8° and drive backwards off the wall to the shooting spot.** Segment
-1 becomes a straight translation with no rotation at all, the shooter is already
-pointed at the HIVE on arrival, and a second or two comes back into the Auto.
+| Leg | Distance | Relative to the shooter | Motion |
+| --- | --- | --- | --- |
+| START → SHOOT | 23.1 in | −13.5° | reversing |
+| SHOOT → CORNER | 37.3 in | +77.5° | **sideways crab** |
+| CORNER → PARK | 63.7 in | −9.0° | reversing |
 
-That means physically placing the robot at the wall facing down-field instead of
-up-field, which is a decision about the robot and the start tile, not something
-to change in code alone. `START_HEADING` is deliberately a separate constant
-from `SHOOT_HEADING` so that this change is a one-line edit once it is decided.
+Verified on both alliances: every pose shares one heading, and blue mirrors to
+257.2° with the same leg geometry.
+
+This replaced an earlier version that started at 90° and spun 167° at the
+shooting spot. That spin was never intentional — it was an artefact of the
+exported path's heading being carried over from the wall start.
+
+### The middle leg is the one compromise
+
+Holding one heading means the 37 in trip towards the corner is covered almost
+entirely sideways. Mecanum does this fine and it is not expensive — the
+Visualizer's own robot profile puts strafing at 65 in/sec against 75 forward, so
+about 13% — but it is the one leg that does not look like "backing up", so it
+will surprise anyone watching.
+
+**If it proves slow or drifty on the field, the fix is in the Visualizer, not
+the code:** move PARK to roughly **(42, 94.5)** and the robot could reverse in a
+straight line from the shooting spot all the way to park, dropping the sideways
+leg entirely. Backing straight up from the shooting spot currently lands at
+x ≈ 42, which is 27 in away from where PARK is drawn — that gap is the only
+reason the corner leg exists.
 
 ## Known and accepted: the robot turns at each seam
 
