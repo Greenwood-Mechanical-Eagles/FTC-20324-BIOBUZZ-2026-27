@@ -53,6 +53,13 @@ Driver Station against this list. These are the exact strings the code asks for.
 `outtakeMotor` **must** be a motor with its encoder cable plugged in. All RPM
 control, and therefore all shot counting, depends on it.
 
+**Quickest way to do this gate:** run `tools/Encoder Check`. It looks each motor
+up separately and prints `NOT IN CONFIG` for any that is missing instead of
+crashing, so it names the broken one rather than making you guess from a stack
+trace. It also answers the encoder question in the same pass — turn each motor
+by hand (or hold a bumper for the intake and flywheel) and watch the Ticks
+column. Ticks moving means the encoder works; stuck on 0 means no cable.
+
 **Fail** → a "device not found" style crash naming the missing device. Fix the
 config, not the code.
 

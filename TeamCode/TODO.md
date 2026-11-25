@@ -40,12 +40,13 @@ Last updated: 2026-11-25
 
 - [x] Pedro's TeleOp drive is in our version — `Follower.manual(forward, lateral, heading)` exists in Pedro 3.0.1 and `Robot.drive()` uses it
 - [x] Get one exported file from the Pedro Visualizer — `docs/PedroPathing/ShootAndPark.pp.json`. Format is `.pp.json`; `common/paths/ShootAndParkPaths` shows how it maps into code
-- [ ] Are encoder cables plugged into all 4 drive motors? (Only matters if we ever want drive velocity control. The *flywheel* encoder is definitely plugged in, or RPM control in TeleOp wouldn't have worked at the meet.)
+- [x] **Encoders are plugged into all 4 drive motors**, and into the flywheel. (The intake is still unconfirmed — `tools/Encoder Check` settles it.) Nothing in the code uses the drive encoders today: `pedro/Constants` sets only motor names and directions, position comes entirely from the Pinpoint pods, and the only `RUN_USING_ENCODER` / `setVelocity` calls in the project are on the flywheel. Two things follow — drive velocity control is available whenever we want it (ROADMAP Phase 4), and a failed drive encoder cable costs us nothing today, so it is not a thing to suspect when the robot misbehaves.
 - [ ] First Gradle sync on a fresh computer needs the internet: `com.pedropathing.ivy:pedro:1.1.1` comes from Maven Central and isn't cached in the repo
 
 ## Still to clean up
 
 - [ ] Merge `ryder/working` and `ryder/Working` into one branch (Windows treats them as the same name)
 - [ ] Check the old StudioProjects folders `20324 2026-2027 Biobuzz` and `30324 2026-2027 Biobuzz`; archive if unused
-- [ ] `students/ryder/RyderIntakeTest.java` — Ryder's old intake test, moved into his folder. Keep or delete, his call
+- [ ] `students/ryder/RyderIntakeTest.java` — Ryder's old intake test, moved into his folder. Keep or delete, his call. **If it's kept it needs a fix:** line 33 asks for a motor called `"Motor"`, while every other file in the project uses `"intakeMotor"`. It is `@Disabled` so it's harmless now, but it will crash at INIT the moment that line is removed.
 - [ ] `tools/XMovementTest` and `tools/YMovementTest` still use the old `sleep()` style. Fine as diagnostics; rewrite or delete eventually
+- [ ] **Does `intakeMotor` have an encoder?** Not confirmed yet — run `tools/Encoder Check`, hold the left bumper and watch its ticks. Either way `common/subsystems/Intake` asks for a plain `DcMotor` and only calls `setPower`, so an encoder there is ignored today. Switch it to `DcMotorEx` if we ever want to spot a jam from stalled intake ticks, or hold a steady feed rate. Not needed now.
