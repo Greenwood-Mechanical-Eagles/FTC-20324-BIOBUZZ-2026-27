@@ -213,12 +213,22 @@ It costs a couple of seconds, and the budget absorbs it comfortably:
 | | Worst case |
 | --- | --- |
 | `settle` before the shot | 1.0 s |
-| spin up (`SPIN_UP_TIMEOUT_MS`) | 3.0 s |
-| volley (`VOLLEY_TIMEOUT_MS`) | 4.0 s |
-| driving, 124 in total | ~4 s |
-| two seam turns | ~2 s |
-| **total** | **~14 s of 30** |
+| spin up (`SPIN_UP_TIMEOUT_MS`) | 4.0 s |
+| volley (`VOLLEY_TIMEOUT_MS`) | 9.0 s |
+| leg 1 plus the 12.8° turn | ~1.1 s |
+| legs 2 and 3 (101 in) | ~3.4 s |
+| **total** | **~19.5 s of 30** |
 
-The volley ends on shot count rather than the clock, so it normally finishes well
-inside that. If Auto ever does run short, giving segments 2 and 3 a constant
-heading is the first thing to try.
+The volley ends on shot count rather than the clock, so it normally finishes far
+inside that.
+
+**The shooting phase is hard-capped too.** It runs inside Ivy's `race()` against
+`ShootAndParkAuto.SHOOT_DEADLINE_MS` (14 s), so whatever goes wrong in there —
+wheel never reaching speed, shot counter mis-tuned, a jam — Auto gives up and
+drives to park. Parking scores; standing still does not. The deadline sits just
+above the two inner timeouts, so in normal running it never fires.
+
+One consequence while `SHOT_DIP_RPM` is still untuned: if shot counting does not
+work, `fire()` always runs to its full timeout, which now costs 9 s rather than
+4 s. That is the price of giving a working shot more room, and another reason to
+do TESTPLAN gate 4 before trusting Auto timings.
