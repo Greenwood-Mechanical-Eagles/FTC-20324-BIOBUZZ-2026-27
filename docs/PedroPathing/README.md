@@ -7,7 +7,7 @@ thing out again from scratch.
 
 | File | Used by | Status |
 | --- | --- | --- |
-| `ShootAndPark.pp.json` | `common/paths/ShootAndParkPaths` → `competition/OfficialAutoRed` / `OfficialAutoBlue` | **Not yet driven.** See the two notes at the bottom |
+| `ShootAndPark.pp.json` | `common/paths/ShootAndParkPaths` → `competition/auto/OfficialAutoRed` / `OfficialAutoBlue` | **Not yet driven.** See the two notes at the bottom |
 
 ## Workflow
 

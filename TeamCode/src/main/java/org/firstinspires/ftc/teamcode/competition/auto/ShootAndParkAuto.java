@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.competition;
+package org.firstinspires.ftc.teamcode.competition.auto;
 
 import static com.pedropathing.ivy.groups.Groups.sequential;
 import static com.pedropathing.ivy.pedro.PedroCommands.follow;

@@ -15,7 +15,9 @@ teamcode/
     commands/     RobotCommands
     paths/        ShootAndParkPaths (red numbers, mirrored for blue)
     Alliance      RED / BLUE and the field flip
-  competition/    OfficialAutoRed/Blue, BackupPark, OfficialDrive, BackupPlainDrive
+  competition/
+    auto/         OfficialAutoRed/Blue, ShootAndParkAuto, BackupPark
+    teleop/       OfficialDrive, BackupPlainDrive
   students/
     ethan/        EthanAuto, EthanTeleOp, EthanPaths      (templates, @Disabled)
     ryder/        RyderAuto, RyderTeleOp, RyderPaths      (templates, @Disabled)
@@ -27,10 +29,10 @@ teamcode/
 
 | File | Status |
 | --- | --- |
-| `competition/OfficialDrive` | **Not yet driven.** The meet TeleOp, rebuilt on `Robot`. Wheel powers are identical to the proven version (see below); the launcher logic is the same code moved into `Launcher` |
-| `competition/BackupPlainDrive` | **Proven at the meet.** The old Rapid Fire Drive, untouched, raw `setPower`, no odometry. The fallback if the Pinpoint dies |
-| `competition/OfficialAutoRed` / `OfficialAutoBlue` | **Not yet run.** Real poses in from the Visualizer (`docs/PedroPathing/`). Both sides come from one set of red numbers. Check the shooting heading first -- see `docs/PedroPathing/README.md` |
-| `competition/BackupPark` | **Field tested.** Drives forward about 17 in. and parks. The Auto to run until the official one has been tested |
+| `competition/teleop/OfficialDrive` | **Not yet driven.** The meet TeleOp, rebuilt on `Robot`. Wheel powers are identical to the proven version (see below); the launcher logic is the same code moved into `Launcher` |
+| `competition/teleop/BackupPlainDrive` | **Proven at the meet.** The old Rapid Fire Drive, untouched, raw `setPower`, no odometry. The fallback if the Pinpoint dies |
+| `competition/auto/OfficialAutoRed` / `OfficialAutoBlue` | **Not yet run.** Real poses in from the Visualizer (`docs/PedroPathing/`). Both sides come from one set of red numbers. Check the shooting heading first -- see `docs/PedroPathing/README.md` |
+| `competition/auto/BackupPark` | **Field tested.** Drives forward about 17 in. and parks. The Auto to run until the official one has been tested |
 | `common/*` | Built and compiling. Untested on hardware |
 | `tools/FlywheelPIDFTuner` | Now starts at the team's real values, P = 1.75, F = 16 |
 
@@ -58,7 +60,7 @@ The problem this architecture set out to fix — TeleOp shooting by RPM while Au
 - **ShotPreset** is one list of RPMs that both modes use.
 - **RobotCommands** are Ivy commands for Auto, snapped together with `sequential(...)`. Every one has a time limit.
 - **No interfaces (strategy pattern) for now.** With one launcher there is nothing to swap. Revisit if a second shooter design or a simulator appears.
-- **Fallback:** `competition/BackupPlainDrive` is a plain `setPower` TeleOp that doesn't touch Pedro, in case odometry fails during a match.
+- **Fallback:** `competition/teleop/BackupPlainDrive` is a plain `setPower` TeleOp that doesn't touch Pedro, in case odometry fails during a match.
 
 ### Three things in here that are easy to get wrong
 
@@ -78,7 +80,7 @@ The problem this architecture set out to fix — TeleOp shooting by RPM while Au
 ### Phase 1: Build the 90% (coach) — built, needs a robot
 
 - [x] Build `common/` (Robot, Launcher, Intake, FlowerCatcher, ShotPreset, RobotCommands)
-- [x] Rebuild ShootAndPark as `competition/ShootAndParkAuto` using the new blocks
+- [x] Rebuild ShootAndPark as `competition/auto/ShootAndParkAuto` using the new blocks
 - [x] Add Auto / TeleOp / paths templates to each student folder
 - [x] **Put real poses in from the Pedro Visualizer** -- `docs/PedroPathing/ShootAndPark.pp.json` -> `common/paths/ShootAndParkPaths`, mirrored for both alliances by `common/Alliance`
 - [ ] **Test on the robot:** `OfficialDrive` must drive and shoot the same as `BackupPlainDrive`

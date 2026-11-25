@@ -17,6 +17,8 @@ teamcode/
     ethan/         Ethan's Autos, TeleOps and paths
     ryder/         Ryder's Autos, TeleOps and paths
   competition/     only OpModes that passed the testing checklist
+    auto/          match Autos
+    teleop/        match TeleOps
   pedro/           Pedro config and tuning (don't change without the coach)
   tools/           tuners and diagnostics (flywheel PIDF, motor direction test)
   training/        lessons

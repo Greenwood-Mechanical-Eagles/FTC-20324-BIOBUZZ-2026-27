@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.competition;
+package org.firstinspires.ftc.teamcode.competition.auto;
 
 import com.pedropathing.api.Paths;
 
