@@ -1,4 +1,6 @@
-package org.firstinspires.ftc.teamcode.autonomous;
+package org.firstinspires.ftc.teamcode.archive;
+
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import com.pedropathing.api.Paths;
 
@@ -18,9 +20,9 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.autonomous.commands.ShootBallCommand;
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 
+@Disabled
 @Autonomous(name = "Shoots ball, and then parks", group = "Autonomous")
 public class ShootAndPark extends OpMode {
 

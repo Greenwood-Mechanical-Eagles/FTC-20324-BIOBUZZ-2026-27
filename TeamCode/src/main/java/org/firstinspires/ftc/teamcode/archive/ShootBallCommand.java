@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.autonomous.commands;
+package org.firstinspires.ftc.teamcode.archive;
 
 import com.pedropathing.ivy.behaviors.EndCondition;
 import com.qualcomm.robotcore.hardware.CRServo;
