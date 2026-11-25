@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.competition.auto;
 
+import com.acmerobotics.dashboard.config.Config;
 import static com.pedropathing.ivy.groups.Groups.sequential;
 import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 
@@ -38,14 +39,26 @@ import org.firstinspires.ftc.teamcode.common.subsystems.ShotPreset;
  * longer patterns -- going out to collect more pollen, or spinning the flywheel
  * up while you drive -- see the Auto template in your own student folder.
  */
+@Config
 public abstract class ShootAndParkAuto extends OpMode {
 
     // ======================= STRATEGY =======================
     /** Flywheel speed for the opening shot. TUNE THIS ON THE FIELD. */
-    private static final ShotPreset OPENING_SHOT = ShotPreset.AUTO_START;
+    public static ShotPreset OPENING_SHOT = ShotPreset.AUTO_START;
 
-    /** How many preloaded pollen to fire. */
-    private static final int OPENING_SHOT_COUNT = 3;
+    /**
+     * How many preloaded pollen to fire.
+     *
+     * MAKE THIS MATCH WHAT THE ROBOT ACTUALLY STARTS WITH. fire() finishes when
+     * the launcher has counted this many pollen leaving, so asking for more
+     * than are loaded means it never reaches the count and sits there for the
+     * whole VOLLEY_TIMEOUT_MS (4 s) on every single run. Asking for fewer just
+     * leaves pollen on board.
+     *
+     * 3 is inherited from the old ShootAndPark and has never been checked
+     * against the real preload.
+     */
+    public static int OPENING_SHOT_COUNT = 3;
     // ========================================================
 
     private Robot robot;
