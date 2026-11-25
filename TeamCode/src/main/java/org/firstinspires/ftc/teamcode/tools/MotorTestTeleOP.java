@@ -3,13 +3,13 @@
 public class MotorTestTeleOP {
 } */
 
-package org.firstinspires.ftc.teamcode.teleop;
+package org.firstinspires.ftc.teamcode.tools;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@TeleOp(name = "Motor Test TeleOp")
+@TeleOp(name = "Motor Test TeleOp", group = "Tools")
 public class MotorTestTeleOP extends LinearOpMode {
     // this test allows you to run each motor seperately to test the directions of the motor
     private DcMotor frontLeft, frontRight, backLeft, backRight;

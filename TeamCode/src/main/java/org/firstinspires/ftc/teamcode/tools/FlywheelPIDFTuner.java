@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.teleop;
+package org.firstinspires.ftc.teamcode.tools;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -18,7 +18,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
  *
  * Values reset when the OpMode stops, so WRITE THEM DOWN.
  */
-@TeleOp(name = "Flywheel PIDF Tuner", group = "Tuning")
+@TeleOp(name = "Flywheel PIDF Tuner", group = "Tools")
 public class FlywheelPIDFTuner extends LinearOpMode {
 
     static final double TICKS_PER_REV = 28;       // bare REV HD Hex, no cartridges
@@ -36,8 +36,8 @@ public class FlywheelPIDFTuner extends LinearOpMode {
         flywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         flywheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
-        double p = 1.75;   // last tuned value
-        double f = 18.0;   // last tuned value
+        double p = 1.75;   // last tuned value (matches common/subsystems/Launcher)
+        double f = 16.0;   // last tuned value (matches common/subsystems/Launcher)
         double targetRPM = 2400;
         boolean running = false;
         boolean inFullPowerTest = false;

@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode.teleop.training;
+package org.firstinspires.ftc.teamcode.training;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-@TeleOp(name = "Lesson 01 - Hello Robot")
+@TeleOp(name = "Lesson 01 - Hello Robot", group = "Training")
 public class Lesson01_HelloRobot extends LinearOpMode {
 
     @Override

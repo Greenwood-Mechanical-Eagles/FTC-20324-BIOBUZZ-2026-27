@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.autonomous.tests;
+package org.firstinspires.ftc.teamcode.tools;
 
 import com.pedropathing.api.Paths;
 
@@ -16,20 +16,20 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 
-@Autonomous(name = "X Movement - Test", group = "Autonomous")
-public class XMovementTest extends LinearOpMode {
+@Autonomous(name = "Y Movement - Test", group = "Tools")
+public class YMovementTest extends LinearOpMode {
 
     private Follower follower;
 
     private final PoseFactory poseFactory = PoseFactory.degrees();
 
-    private final Pose testStartPositionX = poseFactory.of(130.75, 118.75, 180);
-    private final Pose xMovementTest = poseFactory.of(94.75, 118.75, 180);
+    private final Pose start = poseFactory.of(118.75, 130.75, 270);
+    private final Pose yMovementTest = poseFactory.of(118.75, 94.75, 270);
 
     // Autonomous routine
     public Command autoRoutine() {
         return sequential(
-                follow(follower, xMovementTest())
+                follow(follower, yMovementTest())
         );
     }
 
@@ -37,7 +37,7 @@ public class XMovementTest extends LinearOpMode {
     public void runOpMode() {
         Scheduler.reset();
         follower = Constants.create(hardwareMap);
-        follower.setPose(testStartPositionX);
+        follower.setPose(start);
         follower.update();
 
         waitForStart();
@@ -60,7 +60,7 @@ public class XMovementTest extends LinearOpMode {
         }
     }
 
-    public Path xMovementTest() {
-        return Paths.line(testStartPositionX, xMovementTest).linear(testStartPositionX, xMovementTest);
+    public Path yMovementTest() {
+        return Paths.line(start, yMovementTest).linear(start, yMovementTest);
     }
 }
