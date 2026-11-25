@@ -13,31 +13,36 @@ import org.firstinspires.ftc.teamcode.common.subsystems.Launcher;
  * SHOOT AND PARK -- the field numbers for the competition Auto, for either alliance.
  *
  *   new ShootAndParkPaths(Alliance.RED)    red as laid out
- *   new ShootAndParkPaths(Alliance.BLUE)   same plan, field flipped left-to-right
+ *   new ShootAndParkPaths(Alliance.BLUE)   same plan, rotated 180 about the centre
  *
  * Every number below is typed for RED exactly as the Pedro Visualizer exported
- * it. Blue costs nothing extra: Alliance.poses() flips each pose as it is built,
- * so there is only ever ONE set of numbers to re-measure. See common/Alliance.
+ * it. Blue costs nothing extra: Alliance.poses() rotates each pose as it is
+ * built, so there is only ever ONE set of numbers to re-measure. The flip is a
+ * ROTATION, not a left-right mirror -- see common/Alliance for why that matters.
  *
  * Source: docs/PedroPathing/ShootAndPark.pp.json (exported 2026-11-25).
  * Re-exported the path? Replace the POSES block, and the json alongside it.
  *
- * THE PLAN
- *   1. startToShoot()    drive forward off the wall to the shooting spot, facing 90
- *   2. shootToCorner()   back across to the corner
- *   3. cornerToPark()    back up the field to park
+ * THE PLAN -- one motion, no turning
+ * The robot is set down already facing START_HEADING, with its rear-mounted
+ * shooter pointing up the field at the HIVE, and it never rotates again.
+ *
+ *   1. startToShoot()    reverses off the wall to the shooting spot
+ *   2. shootToCorner()   crabs sideways towards the corner
+ *   3. cornerToPark()    reverses up the field into the parking spot
  *
  * ---------------------------------------------------------------------------
- * NOT YET DRIVEN. The shooting SPOT was checked in the Visualizer and is good.
- * The only open question is the HEADING it shoots at: SHOOT_HEADING is 90,
- * carried over from the wall start because the exported path never asks for a
- * turn (its heading goes "linear 90 -> 90"). Measured against the HIVE drawn in
- * the export, 90 is about 13 degrees off the HIVE centre.
+ * THE SHOOTER FIRES OUT THE BACK (Launcher.AIM_OFFSET_DEG = 180), so the robot
+ * sits facing almost directly AWAY from the HIVE. SHOOT_HEADING is 282.8,
+ * derived from the HIVE bearing rather than typed.
  *
- * That only matters if the launcher fires straight along robot-forward AND the
- * HIVE really sits where the export draws it -- neither is confirmed, so treat
- * it as "worth one look on a stand", not a known fault. If pollen go wide to one
- * side, AIM_AT_HIVE_HEADING below is the number to try instead.
+ * Holding one heading has a visible consequence: legs 1 and 3 travel DIAGONALLY
+ * rather than straight back -- about 5 in of sideways drift on leg 1 and 10 in
+ * on leg 3. That looks like the robot veering, and it is the path working as
+ * designed. Check the Pose readout against the target before trimming anything.
+ *
+ * Still not fully proven on the field: 282.8 comes from the HIVE as *drawn* in
+ * the Visualizer, and those shapes were placed by hand. Confirm on a stand.
  * See docs/PedroPathing/README.md.
  * ---------------------------------------------------------------------------
  */
@@ -85,6 +90,31 @@ public class ShootAndParkPaths {
      * a couple of seconds and was only ever an artefact of the exported path.
      */
     public static double START_HEADING = SHOOT_HEADING;
+
+    // ---------------- FIELD TRIMS (dashboard-tunable) ----------------
+    // For SYSTEMATIC offsets: the robot reliably finishes a leg a few inches or
+    // a degree or two off, every single run. They do NOT fix a robot that curves
+    // mid-leg or wanders differently each time -- that is a tracking or odometry
+    // problem and trimming the target just moves where it goes wrong.
+    //
+    // BEFORE REACHING FOR THESE: this Auto holds one heading, so legs 1 and 3
+    // crab DIAGONALLY on purpose -- about 5 in sideways on leg 1 and 10 in on
+    // leg 3. That looks like veering and is the path working correctly. Check
+    // the Pose readout against the target first.
+    //
+    // All three take effect on the next INIT, not mid-run, because the poses are
+    // built in the constructor.
+
+    /** Added to every held heading. Use for a consistent heading bias. */
+    public static double HEADING_TRIM_DEG = 0;
+
+    /** Shifts the driven targets in field inches. START is left alone -- that is
+     *  where the robot is physically placed, not somewhere it drives to. */
+    public static double TARGET_X_TRIM_IN = 0;
+    public static double TARGET_Y_TRIM_IN = 0;
+    // Trims are applied to the RED numbers before the alliance rotation, so they
+    // rotate with it: one trim corrects both sides.
+    // ------------------------------------------------------------------
     // ====================================================
 
     private final PoseFactory poses;
@@ -114,12 +144,18 @@ public class ShootAndParkPaths {
         this.alliance = alliance;
         this.poses = alliance.poses();
 
-        START = poses.of(56, 8.0197, START_HEADING);
-        SHOOT = poses.of(56.2685, 31.1149, SHOOT_HEADING);
+        double h = SHOOT_HEADING + HEADING_TRIM_DEG;
+        double tx = TARGET_X_TRIM_IN;
+        double ty = TARGET_Y_TRIM_IN;
+
+        // START gets the heading trim but no position trim: it is where the robot
+        // is physically set down, not somewhere it drives to.
+        START = poses.of(56, 8.0197, START_HEADING + HEADING_TRIM_DEG);
 
         // Every pose holds the SAME heading: the robot never turns during Auto.
-        CORNER = poses.of(18.9244, 30.9040, SHOOT_HEADING);
-        PARK = poses.of(14.6883, 94.4927, SHOOT_HEADING);
+        SHOOT = poses.of(56.2685 + tx, 31.1149 + ty, h);
+        CORNER = poses.of(18.9244 + tx, 30.9040 + ty, h);
+        PARK = poses.of(14.6883 + tx, 94.4927 + ty, h);
     }
 
     // ======================= PATHS =======================
