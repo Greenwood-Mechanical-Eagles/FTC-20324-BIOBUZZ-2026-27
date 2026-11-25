@@ -47,10 +47,10 @@ public final class RobotCommands {
     // of time; a healthy flywheel spins up in well under 2 seconds.
 
     /** How long to let the flywheel spin up before firing anyway. */
-    public static double SPIN_UP_TIMEOUT_MS = 3000;
+    public static double SPIN_UP_TIMEOUT_MS = 4000;
 
     /** How long a volley may take before we give up on the pollen that are left. */
-    public static double VOLLEY_TIMEOUT_MS = 4000;
+    public static double VOLLEY_TIMEOUT_MS = 9000;
 
     /** Below this speed (inches/sec) the robot counts as stopped. */
     public static double SETTLED_INCHES_PER_SEC = 2.0;

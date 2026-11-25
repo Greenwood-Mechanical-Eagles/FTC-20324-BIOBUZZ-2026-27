@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.competition.auto;
 
 import com.acmerobotics.dashboard.config.Config;
+import static com.pedropathing.ivy.groups.Groups.race;
 import static com.pedropathing.ivy.groups.Groups.sequential;
 import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 
@@ -59,6 +60,20 @@ public abstract class ShootAndParkAuto extends OpMode {
      * against the real preload.
      */
     public static int OPENING_SHOT_COUNT = 3;
+
+    /**
+     * HARD CAP on the whole shooting phase, milliseconds.
+     *
+     * The volley normally ends as soon as the launcher has counted its pollen.
+     * This is the backstop: whatever happens in there -- wheel never reaching
+     * speed, shot counter mis-tuned, a jam -- the Auto gives up at this point
+     * and goes and parks anyway. Parking is worth points; standing still is not.
+     *
+     * Sits just above the sum of the two inner timeouts (SPIN_UP_TIMEOUT_MS +
+     * VOLLEY_TIMEOUT_MS), so in normal operation those govern and this never
+     * fires.
+     */
+    public static double SHOOT_DEADLINE_MS = 14000;
     // ========================================================
 
     private Robot robot;
@@ -79,7 +94,18 @@ public abstract class ShootAndParkAuto extends OpMode {
                 RobotCommands.settle(robot),
 
                 // Fire the pollen we started the match with.
-                RobotCommands.shootVolley(robot, OPENING_SHOT, OPENING_SHOT_COUNT),
+                //
+                // Wrapped in race() so the shot can take as long as it needs
+                // WITHOUT ever costing us the park: whichever finishes first --
+                // the volley or the deadline -- ends this step.
+                race(
+                        RobotCommands.shootVolley(robot, OPENING_SHOT, OPENING_SHOT_COUNT),
+                        RobotCommands.waitMs(SHOOT_DEADLINE_MS)
+                ),
+
+                // race() can cut shootVolley off before its own launcherOff step
+                // runs, so stop the wheel here too. Harmless when it already did.
+                RobotCommands.launcherOff(robot),
 
                 // Back across the field to the corner, then up the field to park.
                 follow(robot.follower, paths.shootToCorner()),
