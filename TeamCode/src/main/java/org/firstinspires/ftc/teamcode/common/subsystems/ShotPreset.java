@@ -11,7 +11,7 @@ package org.firstinspires.ftc.teamcode.common.subsystems;
 public enum ShotPreset {
     LINE(2600),        // A button in TeleOp (tested)
     WALL(2800),        // B button in TeleOp (tested)
-    CORNER(3600),      // Y button in TeleOp (tested)
+    CORNER(3500),      // Y button in TeleOp (ran at the meet as 3600; capped to 3500)
     AUTO_START(2900);  // Auto opening shot. About the old -0.75 power. TUNE ON FIELD.
 
     public final double rpm;
