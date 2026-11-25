@@ -5,8 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-//import com.qualcomm.robotcore.hardware.CoreHex;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 
 @TeleOp(name = "driveMechanum Ryder Intake")
@@ -18,7 +16,6 @@ public class RyderIntakeTest extends LinearOpMode {
     private DcMotor backLeftDrive;
     private DcMotor backRightDrive;
     private DcMotor intakeMotor;
-    //private CRServo intakeServo;
 
     private CRServo leftBumper;
     private CRServo rightBumper;
@@ -39,9 +36,6 @@ public class RyderIntakeTest extends LinearOpMode {
         rightBumper = hardwareMap.get(CRServo.class, "rightSideSweep");
 
 
-        // Reverse left side motors if needed
-        //frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-        //backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         backRightDrive.setDirection(DcMotor.Direction.REVERSE);
 
 
@@ -90,11 +84,7 @@ public class RyderIntakeTest extends LinearOpMode {
             }
 
 
-                //bumper controls
-
-            //boolean aActive;
-            //boolean bActive;
-
+            // bumper controls
             if ((gamepad2.left_bumper) || (gamepad2.left_trigger > 0) ||
                 (gamepad2.right_bumper) || (gamepad2.right_trigger > 0)) {
 

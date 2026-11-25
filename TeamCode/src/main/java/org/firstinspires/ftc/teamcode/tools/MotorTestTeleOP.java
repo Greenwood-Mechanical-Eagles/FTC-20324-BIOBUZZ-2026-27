@@ -1,8 +1,3 @@
-/*package org.firstinspires.ftc.teamcode.teleop;
-
-public class MotorTestTeleOP {
-} */
-
 package org.firstinspires.ftc.teamcode.tools;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
