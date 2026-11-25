@@ -158,6 +158,40 @@ the measurement and the current setting side by side.
 
 ---
 
+## Gate 4b — Intake stall protection (10 min, on a stand)
+
+New behaviour, so it needs proving once. The intake now watches its own encoder
+and cuts power rather than pushing full power into a locked rotor.
+
+Run `1 - Official Drive`, hold gamepad 2 **left trigger** to run the intake in,
+and watch the `Intake` telemetry line.
+
+1. **Normal running:** reads `in`, and `Intake speed` shows a healthy ticks/sec.
+2. **Block it deliberately** — hold the intake so it cannot turn. Within about
+   half a second it should read `STALLED - power cut, retrying`, and
+   `Intake stalls` should start counting.
+3. **Let go.** It should pick back up on its own within a second.
+
+**Pass:** it cuts power when blocked, recovers when freed, and the stall count
+reflects how many times you blocked it.
+
+| Symptom | Fix |
+| --- | --- |
+| Stalls while running normally | `STALL_TICKS_PER_SEC` too high, or `STALL_GRACE_MS` too short |
+| Never notices a hard block | `STALL_TICKS_PER_SEC` too low |
+| Stutters when a pollen catches briefly | raise `STALL_GRACE_MS` |
+| Recovers too slowly for a driver | lower `STALL_COOLDOWN_MS` |
+
+Under a sustained block the motor ends up at roughly a 30% duty cycle (about
+400 ms on, 1000 ms off), which is the whole point — it will sit there safely
+rather than cooking.
+
+Note `Intake stalls` only appears once it is non-zero, so a clean run shows
+nothing. Seeing it climb during a match is the signal that something mechanical
+needs attention.
+
+---
+
 ## Gate 5 — TeleOp drive parity (20 min, on the field, wheels down)
 
 The claim to test: `OfficialDrive` puts the same power on the wheels as the

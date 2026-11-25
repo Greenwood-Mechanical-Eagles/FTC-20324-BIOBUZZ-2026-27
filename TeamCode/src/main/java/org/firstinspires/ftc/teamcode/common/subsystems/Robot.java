@@ -72,6 +72,7 @@ public class Robot {
     public void update() {
         follower.update();
         launcher.update();
+        intake.update();
     }
 
     /** Driver control. forward/strafe/turn are -1..1, straight off the sticks. */
@@ -106,12 +107,13 @@ public class Robot {
         launcher.off();
         launcher.update();
         intake.stop();
+        intake.update();   // stop() only sets intent; update() is what cuts the power
         follower.stop();
     }
 
     public void addTelemetry(Telemetry telemetry) {
         launcher.addTelemetry(telemetry);
-        telemetry.addData("Intake power", "%.2f", intake.getPower());
+        intake.addTelemetry(telemetry);
         telemetry.addData("Pose", "x %.1f  y %.1f  heading %.1f deg",
                 follower.pose().x(),
                 follower.pose().y(),
