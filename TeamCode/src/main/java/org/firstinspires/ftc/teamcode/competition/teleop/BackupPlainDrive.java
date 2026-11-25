@@ -45,9 +45,13 @@ public class BackupPlainDrive extends LinearOpMode {
     // sooner). Spin-up too slow? Make it smaller. Set to 99999 to turn boost off.
     static final double BOOST_WINDOW_RPM = 400;
 
-    // Feeder servo: +1.0 loads pollen INTO the flywheel (tested on robot).
+    // Feeder servo: -1.0 loads pollen INTO the flywheel.
     // Left bumper = fire (speed safety), right bumper = reverse to clear a jam.
-    static final double FEED_POWER = 1.0;
+    // MEASURED ON THE ROBOT 2026-11-25. The old note here claimed +1.0 fed
+    // inwards; driving it proved that backwards, so the meet TeleOp was pushing
+    // pollen out rather than in. Second changed line in this otherwise untouched
+    // file -- revert this single constant if that turns out to be wrong.
+    static final double FEED_POWER = -1.0;
 
     // Set true if the intake must also run to push pollen up into the feeder
     static final boolean RUN_INTAKE_WHILE_FIRING = true;

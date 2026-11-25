@@ -70,43 +70,59 @@ segments 2 and 3 to park. Segments 2 and 3 are driven backwards.
 
 Both alliances come out in bounds with the same wall clearances (checked against
 a 16 × 16 in robot; the tightest is the start pose, whose bumper sits on the
-y = 0 wall as you'd expect for a wall start).## The shooting heading almost certainly needs changing
+y = 0 wall as you'd expect for a wall start).## The shooting heading: corrected for a rear-firing shooter
 
-**Confirmed 2026-11-25: the shooter is fixed to the chassis and fires along
-robot-forward.** So the robot's heading at the shooting spot *is* the direction
-the pollen go. There is no turret to make up the difference.
+**Measured on the robot 2026-11-25: the shooter fires out the BACK, and the
+feeder servo was running backwards.** Both are fixed in code. The rear-firing
+part changes the aiming maths completely.
 
-That makes `SHOOT_HEADING` the most important number in
-`common/paths/ShootAndParkPaths`, and the exported 90° looks wrong:
+Pollen leave along `SHOOT_HEADING + 180`, so **the robot must sit facing almost
+directly away from the HIVE.** That is encoded once, as
+`Launcher.AIM_OFFSET_DEG = 180`, and the aim heading is derived from it rather
+than typed:
 
-- The shooting **position** (56.27, 31.11) is good — 40.6 in from the HIVE with
-  a clear line. Laid out and simulated in the Visualizer. Not in question.
-- The **heading** of 90° was never aimed at anything. The export's segment 1
-  interpolates heading `linear 90 -> 90`, so it carries the wall start's 90°
-  straight through. Nothing in the path asks the robot to turn.
-- Shooting on heading 90° from that spot sends the pollen along the line
-  x = 56.3, straight up the field. The red HIVE is drawn at x = 46–48.6. That
-  line runs **parallel to the HIVE wall, about 8 in to its side, and never
-  crosses it** — it isn't a near miss that lands short or long, it goes past.
-- `AIM_AT_HIVE_HEADING` = **102.8°** is the heading that points at the middle of
-  the drawn HIVE (a 12.8° turn). Blue mirrors to 10.7°.
+```
+AIM_AT_HIVE_HEADING = HIVE_BEARING_DEG - Launcher.AIM_OFFSET_DEG
+                    = 102.8 - 180
+                    = 282.8
+```
 
-**Still worth confirming before changing it**, because the one remaining unknown
-is whether the HIVE is drawn where the real HIVE sits. Those shapes were dragged
-in by hand and are not self-consistent — red and blue disagree about the field
-centre by 1.5 in (see the mirror axis note above). If the drawn rectangle is only
-the HIVE's back panel and the real scoring opening is wider or further out, 90°
-may clip it after all.
+`SHOOT_HEADING` is now 282.8. Verified by building both alliances' poses:
 
-So: put the robot on the shoot pose and fire a few pollen. Then set
-`SHOOT_HEADING` to whatever actually scores. It's one constant and it fixes both
-alliances at once — no re-export needed.
+| | Faces | Shot leaves along | HIVE bearing | Aim error |
+| --- | --- | --- | --- | --- |
+| RED | 282.8° | 102.8° | 102.8° | −0.03° |
+| BLUE | 257.2° | 77.2° | 79.3° | +2.12° (1.5 in) |
 
-`START_HEADING` (90°) is kept separate from `SHOOT_HEADING` on purpose: the start
-heading is a physical measurement of how the robot sits against the wall, while
-the shoot heading is an aiming choice. Segment 1 turns from one to the other on
-the way up the field, so re-aiming the shot never implies the robot started the
-match rotated.
+Blue's 1.5 in is the hand-drawn HIVE asymmetry described above, not a mirror
+fault — the mirror itself is exact.
+
+For the record, the exported 90° was not a near miss. With a rear-firing
+shooter it sent the pollen out along 270°, **167° away from the HIVE** — almost
+exactly backwards. This is why `AIM_OFFSET_DEG` exists as a named constant: a
+180° aiming error is uniquely hard to spot from telemetry, because every number
+on the screen looks perfectly reasonable.
+
+Still confirm it on a stand. 282.8 is derived from the HIVE as *drawn*, and
+those shapes remain hand-placed. Put the robot on the shoot pose, fire, rotate
+by hand until it scores, and read the heading off telemetry.
+
+## Worth relaying the path: the robot now turns 167° on the spot
+
+This is the cost of fixing the aim without touching the path. The start pose
+faces 90° and the shoot pose now faces 282.8°, so the robot drives 23 in up the
+field and rotates **167°** on arrival. It works, but it is slow and it is not
+how anyone would lay this out on purpose.
+
+The tidy fix is in the Visualizer, not the code: **have the robot start facing
+roughly 282.8° and drive backwards off the wall to the shooting spot.** Segment
+1 becomes a straight translation with no rotation at all, the shooter is already
+pointed at the HIVE on arrival, and a second or two comes back into the Auto.
+
+That means physically placing the robot at the wall facing down-field instead of
+up-field, which is a decision about the robot and the start tile, not something
+to change in code alone. `START_HEADING` is deliberately a separate constant
+from `SHOOT_HEADING` so that this change is a one-line edit once it is decided.
 
 ## Known and accepted: the robot turns at each seam
 

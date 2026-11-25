@@ -35,6 +35,23 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Launcher {
 
     // ===================== SETTINGS =====================
+    /**
+     * WHICH WAY THE POLLEN LEAVE, relative to the front of the robot.
+     *
+     * 180 = out the BACK. Confirmed by shooting it on 2026-11-25.
+     *
+     * This matters for aiming and nothing else, but it matters a lot: to put a
+     * shot on a target the robot has to sit at
+     *
+     *     heading = bearing_to_target - AIM_OFFSET_DEG
+     *
+     * so a rear-firing shooter must face almost exactly AWAY from the goal. Get
+     * this wrong and the robot aims perfectly in the opposite direction, which
+     * is a hard mistake to spot from telemetry because every number looks sane.
+     * Mounted differently later? Change this, not the path headings.
+     */
+    public static final double AIM_OFFSET_DEG = 180;
+
     // Bare REV HD Hex, no gear cartridges = 28 ticks per rev.
     public static final double TICKS_PER_REV = 28;
 
@@ -53,8 +70,12 @@ public class Launcher {
     // Overshooting? Make BIGGER. Spin-up too slow? Make smaller. 99999 = boost off.
     public static double BOOST_WINDOW_RPM = 400;
 
-    // +1.0 loads pollen INTO the flywheel (tested on robot).
-    public static double FEED_POWER = 1.0;
+    // -1.0 loads pollen INTO the flywheel.
+    // MEASURED ON THE ROBOT 2026-11-25: the old note claimed +1.0 fed inwards
+    // and driving it proved that backwards -- the left bumper was pushing pollen
+    // back out. setClearingJam() uses -FEED_POWER, so this one sign flips both
+    // feeding and jam-clearing together.
+    public static double FEED_POWER = -1.0;
 
     // Smallest speed the D-pad fine-tune can go down to.
     public static double MIN_ADJUST_RPM = 100;

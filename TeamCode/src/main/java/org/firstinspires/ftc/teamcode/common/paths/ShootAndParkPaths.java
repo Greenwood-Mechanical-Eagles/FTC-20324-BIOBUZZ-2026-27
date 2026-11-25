@@ -6,6 +6,7 @@ import com.pedropathing.math.Pose;
 import com.pedropathing.paths.Path;
 
 import org.firstinspires.ftc.teamcode.common.Alliance;
+import org.firstinspires.ftc.teamcode.common.subsystems.Launcher;
 
 /**
  * SHOOT AND PARK -- the field numbers for the competition Auto, for either alliance.
@@ -49,31 +50,34 @@ public class ShootAndParkPaths {
      */
     public static final double START_HEADING = 90;
 
-    /**
-     * Where the robot points when it fires.
-     *
-     * THE SHOOTER IS FIXED AND FIRES ALONG ROBOT-FORWARD, so this number IS the
-     * direction the pollen go. It is the single most important number in this
-     * file, and it is independent of START_HEADING -- path 1 turns the robot
-     * from one to the other on the way up the field.
-     *
-     * 90 is what the Visualizer exported, but the export never aimed at
-     * anything: its heading goes "linear 90 -> 90", so it just carried the wall
-     * start's 90 through to the shooting spot. See AIM_AT_HIVE_HEADING.
-     */
-    public static double SHOOT_HEADING = 90;
+    /** Bearing from the shooting spot to the middle of the red HIVE as drawn in
+     *  the export: 40.6 in away, 102.8 degrees. */
+    public static final double HIVE_BEARING_DEG = 102.8;
 
     /**
-     * The heading that points at the middle of the red HIVE as drawn in the
-     * Visualizer export (from the shooting spot: 40.6 in away, bearing 102.8).
+     * The heading to sit at so that a REAR-firing shooter puts the pollen on the
+     * HIVE. Derived from the shooter geometry rather than typed, so the two can
+     * never drift apart: 102.8 - 180 = 282.8.
      *
-     * Worth knowing before you use it: with SHOOT_HEADING at 90 the shot leaves
-     * on a line that runs PARALLEL to the HIVE wall, about 8 in to its side, and
-     * never crosses it -- so if the HIVE really is where the export draws it, 90
-     * cannot score. Those shapes were placed by hand though, so confirm against
-     * the real field before trusting 102.8 either.
+     * Still only as good as the HIVE position drawn in the Visualizer, and those
+     * shapes were placed by hand and disagree with each other by 1.5 in. So this
+     * is the best estimate available, not a measurement -- confirm it on a stand
+     * and replace it with whatever actually scores. See docs/PedroPathing/README.
      */
-    public static final double AIM_AT_HIVE_HEADING = 102.8;
+    public static final double AIM_AT_HIVE_HEADING =
+            ((HIVE_BEARING_DEG - Launcher.AIM_OFFSET_DEG) % 360 + 360) % 360;
+
+    /**
+     * Where the robot points when it fires. The most important number here.
+     *
+     * THE SHOOTER FIRES OUT THE BACK (Launcher.AIM_OFFSET_DEG), so this is NOT
+     * the direction the pollen go -- they leave on SHOOT_HEADING + 180, which
+     * means the robot sits facing almost directly AWAY from the HIVE.
+     *
+     * Independent of START_HEADING: path 1 turns the robot from one to the other
+     * on the way up the field.
+     */
+    public static double SHOOT_HEADING = AIM_AT_HIVE_HEADING;
     // ====================================================
 
     private final PoseFactory poses;
