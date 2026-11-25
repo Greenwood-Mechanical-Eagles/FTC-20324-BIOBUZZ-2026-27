@@ -21,39 +21,72 @@ Always lay paths out on the **red** side. Blue comes free — see below.
 
 ## Red and blue from one set of numbers
 
-Every pose is typed once, for red. `common/Alliance` flips it for blue:
+Every pose is typed once, for red. `common/Alliance` turns it into blue by
+**rotating the whole plan 180° about the middle of the field**:
 
 ```
-x        ->  144 - x      (mirrored across x = 72, the middle of the field)
-y        ->  unchanged     (both alliances start at the same wall)
-heading  ->  180 - heading
+x        ->  144 - x
+y        ->  144 - y
+heading  ->  heading + 180
 ```
 
-`Alliance.poses()` hands back a Pedro `PoseFactory` that has the flip baked in,
-so a paths class just asks for red numbers and gets the right side out:
+`Alliance.poses()` hands back a Pedro `PoseFactory` with that baked in, so a
+paths class asks for red numbers and gets the right side out:
 
 ```java
 PoseFactory poses = alliance.poses();
-START = poses.of(56, 8.0197, 90);     // red: (56, 8.02, 90)
-                                      // blue: (88, 8.02, 90)
+START = poses.of(56, 8.0197, 282.8);   // red:  (56,  8.0,  282.8)
+                                       // blue: (88, 136.0, 102.8)
 ```
 
-**Never type a second set of blue numbers.** One set of numbers means re-measuring
-the field fixes both sides at once; two sets means they quietly drift apart and
-only one of them gets tested.
+**Never type a second set of blue numbers.** One set means re-measuring the
+field fixes both sides at once; two sets drift apart and only one ever gets
+tested.
 
-`PoseFactory` is immutable — `mirrorX()` returns a new factory — so blue can
-never corrupt red.
+`PoseFactory` is immutable — `rotateAround()` returns a new factory — so blue
+can never corrupt red.
 
-### The mirror axis
+### It is a rotation, not a mirror
 
-`Alliance.MIRROR_AXIS_X` is **72**, the exact middle of a 144 × 144 in field.
+This was originally written as a left-right mirror (`mirrorX`) and that was
+**wrong**. Running it on the field on 2026-11-25 showed why: the blue Auto
+crabbed right where it needed to crab left, and hit the teeter totter.
 
-The HIVE shapes in `ShootAndPark.pp.json` actually imply 71.25: the red HIVE is
-drawn 24.7 in from centre and the blue one 23.2 in. Those shapes were dragged
-into place by hand in the Visualizer and aren't measured field data, so 72 is
-the number to trust. If blue is consistently ~1.5 in off while red is good,
-`MIRROR_AXIS_X` is the one constant to change.
+Two independent reasons rotation is correct:
+
+1. **The alliances start at opposite ends of the field.** A rotation sends the
+   start pose to the far wall (y = 8 becomes y = 136), which is where the other
+   alliance actually begins. A mirror left both alliances starting at y = 8,
+   against the same wall — physically wrong for a FIRST field.
+2. **A rotation preserves the plan's handedness; a mirror reverses it.** Our
+   Auto holds one heading and crabs sideways for its middle leg, so a flipped
+   handedness sends that leg the wrong way round for one alliance. Under
+   rotation both alliances have identical leg geometry relative to the robot
+   (−13.5°, +77.5°, −9.0° off the shooter); under the mirror the middle leg
+   came out +77.5° for red and −77.5° for blue.
+
+The symptom is worth remembering because it is confusing: red was fine, blue
+drove a plausible-looking path that was subtly inside-out, and all the telemetry
+looked reasonable throughout.
+
+### The centre of rotation
+
+`Alliance.FIELD_CENTRE` is **72**, the exact middle of a 144 × 144 in field.
+
+The HIVE shapes in `ShootAndPark.pp.json` imply 71.25: the red HIVE is drawn
+24.7 in from centre and the blue one 23.2 in. Those were dragged into place by
+hand and aren't measured field data, so 72 is the number to trust. If blue is
+consistently ~1.5 in off while red is good, `FIELD_CENTRE` is the one constant
+to change.
+
+Aim after the fix, against each alliance's own HIVE as drawn:
+
+| | Shoot pose | Shooter points | Aim error |
+| --- | --- | --- | --- |
+| RED | (56.27, 31.11) | 102.8° | −0.03° (0.02 in) |
+| BLUE | (87.73, 112.89) | 282.8° | −2.76° (2.06 in) |
+
+Blue's couple of inches is the hand-drawn HIVE asymmetry, not a transform fault.
 
 ## What this path does
 

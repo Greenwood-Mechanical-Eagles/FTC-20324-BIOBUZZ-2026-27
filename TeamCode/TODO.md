@@ -19,7 +19,7 @@ Last updated: 2026-11-25
 - [x] **Auto is now one motion, no turning.** Robot is placed facing `START_HEADING` (= `SHOOT_HEADING`, 282.8) with the shooter already aimed up the field; all three legs hold that one heading, so it reverses off the wall, fires, and reverses on to park. Replaced the version that spun 167 degrees at the shooting spot.
 - [ ] **Watch the middle leg on the field.** Holding one heading makes the 37 in trip toward the corner almost pure sideways crab (77 degrees off the shooter). Mecanum handles it and it costs ~13% in speed, but if it drifts, move PARK to about (42, 94.5) in the Visualizer and the robot can reverse straight from the shooting spot to park, dropping that leg. Backing straight up currently lands at x~42 against PARK's x=14.7 — that 27 in gap is the only reason the corner leg exists.
 - [ ] `competition/auto/OfficialAutoRed` on the field, 3 times in a row with the same result.
-- [ ] `competition/auto/OfficialAutoBlue` on the field — confirm the mirror is right (same shape of run, other side).
+- [ ] `competition/auto/OfficialAutoBlue` on the field — re-test after the transform fix. The alliance flip was a left-right mirror and that was **wrong**; on 2026-11-25 red ran close but blue crabbed right where it should have crabbed left and hit the teeter totter. It is now a 180° rotation about the field centre, which starts blue at the far wall (y=136, not y=8) and keeps the handedness. Cheapest check is at INIT, no driving: blue must read `y 136.0  heading 103`.
 
 ## Decisions (coach)
 

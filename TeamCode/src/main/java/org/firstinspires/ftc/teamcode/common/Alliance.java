@@ -16,13 +16,24 @@ import com.pedropathing.api.PoseFactory;
  * path and blue is fixed too. Never type a second set of blue numbers by hand --
  * that is how the two sides quietly drift apart.
  *
- * HOW THE FLIP WORKS
- *   x        ->  2 * MIRROR_AXIS_X - x   (left-right across the middle of the field)
- *   y        ->  unchanged               (both alliances start at the same wall)
- *   heading  ->  180 - heading
+ * HOW THE FLIP WORKS -- it is a ROTATION, not a mirror
+ *   x        ->  2 * CENTRE - x
+ *   y        ->  2 * CENTRE - y
+ *   heading  ->  heading + 180
  *
- * Pedro does the arithmetic (PoseFactory.mirrorX), so there is nothing to get
- * wrong by hand. A PoseFactory is immutable: calling mirrorX gives you a NEW
+ * i.e. spin the whole plan 180 degrees about the middle of the field. Two
+ * reasons that is the right transform and a left-right mirror is not:
+ *
+ *   1. The alliances start at OPPOSITE ends of the field. A rotation sends the
+ *      start pose to the far wall, which is where the other alliance actually
+ *      begins. A mirror would leave both alliances starting at the same wall.
+ *   2. A rotation keeps the plan's handedness. A mirror reverses it, so every
+ *      sideways move would go the wrong way round for one alliance -- which is
+ *      exactly what happened on the field on 2026-11-25: the mirrored Auto
+ *      crabbed right where it needed to crab left and hit the teeter totter.
+ *
+ * Pedro does the arithmetic (PoseFactory.rotateAround), so there is nothing to
+ * get wrong by hand. A PoseFactory is immutable: rotateAround gives you a NEW
  * factory and leaves the original alone, so RED can never be corrupted by BLUE.
  */
 public enum Alliance {
@@ -31,9 +42,9 @@ public enum Alliance {
 
     // ===================== SETTINGS =====================
     /**
-     * The left-right centre line of the field that red and blue mirror across.
+     * The middle of the field, which the plan is rotated about.
      *
-     * 72 is the exact middle of a 144 x 144 inch field, which is where a FIRST
+     * 72 is the exact centre of a 144 x 144 inch field, which is where a FIRST
      * field is symmetrical.
      *
      * WORTH KNOWING: the HIVE decorations drawn in the Visualizer export imply
@@ -43,7 +54,7 @@ public enum Alliance {
      * consistently about an inch and a half off while RED is good, this constant
      * is the ONE place to change.
      */
-    public static final double MIRROR_AXIS_X = 72.0;
+    public static final double FIELD_CENTRE = 72.0;
     // ====================================================
 
     /**
@@ -52,7 +63,7 @@ public enum Alliance {
      */
     public PoseFactory poses() {
         PoseFactory red = PoseFactory.degrees();
-        return this == RED ? red : red.mirrorX(MIRROR_AXIS_X);
+        return this == RED ? red : red.rotateAround(FIELD_CENTRE, FIELD_CENTRE, 180);
     }
 
     public Alliance other() {

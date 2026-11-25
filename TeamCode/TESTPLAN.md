@@ -82,13 +82,17 @@ On the two Autos, read the `START pose` line at INIT:
 
 | OpMode | Expected |
 | --- | --- |
-| `1 - Official Auto RED` | `x 56.0  y 8.0  heading 90 deg` |
-| `1 - Official Auto BLUE` | `x 88.0  y 8.0  heading 90 deg` |
+| `1 - Official Auto RED` | `x 56.0  y 8.0  heading 283 deg` |
+| `1 - Official Auto BLUE` | `x 88.0  y 136.0  heading 103 deg` |
 
-**Pass:** blue reads 88 where red reads 56, everything else identical.
-That is the whole red↔blue mirror confirmed without moving the robot.
+**Pass:** blue is red rotated 180° about the middle of the field — x and y both
+flip about 72, and the heading is 180° round. **Blue must read y = 136, not
+y = 8**: the alliances start at opposite ends, so if blue reads y = 8 the
+transform has reverted to a left-right mirror, which is the bug found on
+2026-11-25. That is the whole alliance transform confirmed without moving the
+robot.
 
-**Fail** → `common/Alliance.MIRROR_AXIS_X`.
+**Fail** → `common/Alliance.FIELD_CENTRE`, or the transform in `Alliance.poses()`.
 
 ---
 
@@ -321,7 +325,7 @@ Same run, mirrored. Because both alliances run identical code, this is really a
 test of the field numbers and the mirror axis, not of the Auto logic.
 
 **Pass:** same shape of run on the other side, scoring and parking equivalently.
-**Fail, consistently offset by an inch or two** → `Alliance.MIRROR_AXIS_X`
+**Fail, consistently offset by an inch or two** → `Alliance.FIELD_CENTRE`
 (currently 72; the export's hand-drawn shapes imply 71.25).
 
 ---
