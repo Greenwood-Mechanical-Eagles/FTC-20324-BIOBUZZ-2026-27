@@ -77,19 +77,29 @@ public class ShootAndParkPaths {
     public static double SHOOT_HEADING = AIM_AT_HIVE_HEADING;
 
     /**
-     * The heading the robot physically sits at against the wall, and the heading
-     * it holds for the ENTIRE Auto. Same as SHOOT_HEADING on purpose.
+     * The heading the robot PHYSICALLY SITS AT against the wall.
      *
-     * THIS IS A PLACEMENT INSTRUCTION, not a tuning knob: the robot is set down
-     * on the start tile already facing this way, with its shooter pointing up
-     * the field at the HIVE. Nothing in Auto ever turns.
+     * THIS IS A MEASUREMENT, NOT A CHOICE. follower.setPose(START) does not
+     * steer the robot -- it DEFINES where the field frame is. If this number
+     * disagrees with how the robot is really sitting, the entire path rotates
+     * by the difference and nothing downstream can detect or correct it.
      *
-     * That is what makes the whole run one motion -- it reverses off the wall,
-     * fires, and reverses onward to park, never rotating. The alternative was
-     * starting at 90 and spinning 167 degrees at the shooting spot, which cost
-     * a couple of seconds and was only ever an artefact of the exported path.
+     * 270 because the robot is pushed FLUSH against the wall, front to the
+     * wall, shooter pointing up the field. Flush can only ever be 90 or 270;
+     * any other number is physically unachievable by pushing a robot against a
+     * flat wall, so it must not be set to one.
+     *
+     * HOW WE LEARNED THIS: it was briefly set equal to SHOOT_HEADING (282.8) so
+     * that Auto never had to turn. But 282.8 is 12.8 degrees off flush, so the
+     * robot really sat at 270 while the code believed 282.8. That rotated the
+     * whole plan and put the park about 21 in off -- which matches the ~18 in
+     * miss measured on the field on 2026-11-25.
+     *
+     * The cost of being honest here is one small turn: path 1 rotates 12.8
+     * degrees from this heading to SHOOT_HEADING on the way up the field. Well
+     * under a second, and the robot still never turns after the shot.
      */
-    public static double START_HEADING = SHOOT_HEADING;
+    public static double START_HEADING = 270;
 
     // ---------------- FIELD TRIMS (dashboard-tunable) ----------------
     // For SYSTEMATIC offsets: the robot reliably finishes a leg a few inches or
@@ -172,9 +182,17 @@ public class ShootAndParkPaths {
     // puts strafing at 65 in/sec against 75 forward, so it costs about 13%.
     // -------------------------------------------------------------------------
 
-    /** Reverses off the wall to the shooting spot. No turning. */
+    /**
+     * Reverses off the wall to the shooting spot, turning the 12.8 degrees from
+     * the flush wall heading to the shooting heading on the way.
+     *
+     * linear() rather than constant() ONLY because START_HEADING must describe
+     * where the robot really sits (flush, 270) rather than where we would like
+     * it to point. Lying about the start heading to avoid this turn is what put
+     * the park ~21 in off. Everything after the shot still holds one heading.
+     */
     public Path startToShoot() {
-        return Paths.line(START, SHOOT).constant(SHOOT.heading());
+        return Paths.line(START, SHOOT).linear(START, SHOOT);
     }
 
     /**

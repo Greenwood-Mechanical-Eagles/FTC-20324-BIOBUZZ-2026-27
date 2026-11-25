@@ -140,26 +140,52 @@ Still confirm it on a stand. 282.8 is derived from the HIVE as *drawn*, and
 those shapes remain hand-placed. Put the robot on the shoot pose, fire, rotate
 by hand until it scores, and read the heading off telemetry.
 
-## The Auto is one motion: reverse, shoot, reverse to park
+## The Auto: one small turn, then no turning
 
-The robot is **placed on the start tile already facing `START_HEADING`** with its
-shooter pointing up the field at the HIVE, and it never turns again. All three
-segments use `constant()` rather than `tangent()` / `reverseTangent()`, because
-tangent headings rotate the robot to follow the direction of travel — exactly
-what you don't want when the shooter is bolted to the back.
+The robot is pushed **flush against the wall** — square, front to the wall,
+shooter pointing up the field. That is `START_HEADING`, and it is 270 for red
+(90 for blue after the rotation).
+
+Leg 1 turns 12.8° from that flush heading to `SHOOT_HEADING` (282.8) on the way
+up the field. After the shot the robot never turns again: legs 2 and 3 use
+`constant()`, so it crabs and reverses to park holding one heading.
 
 | Leg | Distance | Relative to the shooter | Motion |
 | --- | --- | --- | --- |
-| START → SHOOT | 23.1 in | −13.5° | reversing |
+| START → SHOOT | 23.1 in | −13.5° | reversing, turning 12.8° |
 | SHOOT → CORNER | 37.3 in | +77.5° | **sideways crab** |
 | CORNER → PARK | 63.7 in | −9.0° | reversing |
 
-Verified on both alliances: every pose shares one heading, and blue mirrors to
-257.2° with the same leg geometry.
+### START_HEADING is a measurement, not a choice
 
-This replaced an earlier version that started at 90° and spun 167° at the
-shooting spot. That spin was never intentional — it was an artefact of the
-exported path's heading being carried over from the wall start.
+`follower.setPose(START)` does not steer the robot — it **defines where the
+field frame is**. If that heading disagrees with how the robot is really
+sitting, the entire path rotates by the difference, and nothing downstream can
+detect or correct it. There is no feedback: telemetry will cheerfully report
+whatever you told it.
+
+This bit us. `START_HEADING` was briefly set to 282.8 so that Auto never had to
+turn at all. But **282.8 is 12.8° off square, and you cannot place a robot at a
+non-square heading by pushing it flush against a flat wall.** The robot really
+sat at 270 while the code believed 282.8, which rotated the whole plan and put
+the park roughly 21 in off — matching the miss measured on the field on
+2026-11-25.
+
+The rule that falls out of it: **a flush start can only ever be 90 or 270.** If
+`START_HEADING` is anything else, either the robot is being placed by eye (bad,
+and unrepeatable under match pressure) or the number is simply wrong.
+
+### Note: the code and the .pp file handle headings differently
+
+`ShootAndPark.pp.json` still carries the Visualizer's own heading settings —
+`CornerToPark`, for instance, is tangential with Reverse ticked, so the
+Visualizer shows the robot rotating to face along each leg.
+
+The code deliberately overrides that with `constant()` after leg 1, because the
+shooter is bolted to the back and we want it aimed, not swinging round to follow
+the direction of travel. So **the simulation and the real robot will not look
+the same**, and that is expected. The `.pp` file is the source of the *positions*;
+the headings live in the code.
 
 ### The middle leg is the one compromise
 

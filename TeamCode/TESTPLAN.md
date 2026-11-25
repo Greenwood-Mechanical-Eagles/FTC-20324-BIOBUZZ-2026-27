@@ -122,8 +122,13 @@ On the two Autos, read the `START pose` line at INIT:
 
 | OpMode | Expected |
 | --- | --- |
-| `1 - Official Auto RED` | `x 56.0  y 8.0  heading 283 deg` |
-| `1 - Official Auto BLUE` | `x 88.0  y 136.0  heading 103 deg` |
+| `1 - Official Auto RED` | `x 56.0  y 8.0  heading 270 deg` |
+| `1 - Official Auto BLUE` | `x 88.0  y 136.0  heading 90 deg` |
+
+Both start headings are **flush** values — the robot is pushed square against
+the wall. If this ever shows a heading that is not 90 or 270, someone has set
+`START_HEADING` to a number you cannot physically place the robot at, and the
+whole path will be rotated by the difference.
 
 **Pass:** blue is red rotated 180° about the middle of the field — x and y both
 flip about 72, and the heading is 180° round. **Blue must read y = 136, not
