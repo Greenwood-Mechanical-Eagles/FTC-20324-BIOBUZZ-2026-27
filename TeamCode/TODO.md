@@ -43,7 +43,8 @@ Last updated: 2026-11-25
 - [x] Pedro's TeleOp drive is in our version — `Follower.manual(forward, lateral, heading)` exists in Pedro 3.0.1 and `Robot.drive()` uses it
 - [x] Get one exported file from the Pedro Visualizer — `docs/PedroPathing/ShootAndPark.pp.json`. Format is `.pp.json`; `common/paths/ShootAndParkPaths` shows how it maps into code
 - [x] **Every motor on the robot has an encoder** — 4 drive, flywheel and intake. The flywheel's runs RPM control and shot counting; the intake's now runs stall protection. The 4 drive ones are unused: `pedro/Constants` sets only motor names and directions, position comes entirely from the Pinpoint pods, and the only `RUN_USING_ENCODER` / `setVelocity` calls in the project are on the flywheel. Two things follow — drive velocity control is available whenever we want it (ROADMAP Phase 4), and a failed drive encoder cable costs us nothing today, so it is not a thing to suspect when the robot misbehaves.
-- [ ] First Gradle sync on a fresh computer needs the internet: `com.pedropathing.ivy:pedro:1.1.1` comes from Maven Central and isn't cached in the repo
+- [ ] First Gradle sync on a fresh computer needs the internet: `com.pedropathing.ivy:pedro:1.1.1` comes from Maven Central, and `com.acmerobotics.dashboard:dashboard:0.6.0` from `maven.brott.dev`. Neither is cached in the repo. Sync at home, not at an event.
+- [x] **FTC Dashboard added** — live constant tuning at `http://192.168.43.1:8080/dash`. `Launcher`, `Intake`, `Robot`, `RobotCommands` and `ShootAndParkPaths` are `@Config`. Note dashboard 0.6.0 is published against SDK 10.0.0, so the dependency excludes `org.firstinspires.ftc` to stop it pulling older SDK artifacts in beside our 12.0.0 — verified all eight stay at 12.0.0. Path headings need a re-INIT to apply; see TESTPLAN.
 
 ## Still to clean up
 

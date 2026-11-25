@@ -2,6 +2,7 @@ repositories {
     mavenCentral()
     google() // Needed for androidx
     maven { url 'https://repo.dairy.foundation/releases/'}
+    maven { url 'https://maven.brott.dev/' } // FTC Dashboard
 }
 
 dependencies {
@@ -17,5 +18,14 @@ dependencies {
     implementation 'com.pedropathing:revhub:3.0.1'
     implementation 'com.pedropathing:tuning:1.0.0'
     implementation 'com.pedropathing.ivy:pedro:1.1.1'
+
+    // FTC Dashboard: live tuning of @Config constants at
+    // http://192.168.43.1:8080/dash while an OpMode runs.
+    // The exclude is required: dashboard 0.6.0 is published against FTC SDK
+    // 10.0.0, and without this it drags those older SDK artifacts in alongside
+    // our 12.0.0 ones.
+    implementation('com.acmerobotics.dashboard:dashboard:0.6.0') {
+        exclude group: 'org.firstinspires.ftc'
+    }
 }
 

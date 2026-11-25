@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.common.subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -42,6 +43,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  * be, means something is dragging. Needs TARGET_RPM set to mean anything.
  * ---------------------------------------------------------------------------
  */
+@Config
 public class Intake {
 
     // ===================== SETTINGS =====================

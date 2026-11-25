@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.common.subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -32,6 +33,7 @@ import org.firstinspires.ftc.teamcode.pedro.Constants;
  * for the day the odometry pod dies. It does not use Robot at all, on purpose.)
  * ---------------------------------------------------------------------------
  */
+@Config
 public class Robot {
 
     // ===================== SETTINGS =====================

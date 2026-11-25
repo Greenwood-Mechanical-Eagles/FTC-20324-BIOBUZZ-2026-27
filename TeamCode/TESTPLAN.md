@@ -16,6 +16,46 @@ tuning paths to fix a launcher problem.
 Record results as you go — the bottom of this file has a table. "It worked" with
 no numbers can't be compared against next week.
 
+## Tune numbers without redeploying: FTC Dashboard
+
+Most gates below are "change one constant, look again". FTC Dashboard lets you
+do that live instead of rebuilding and redeploying each time.
+
+Join the Control Hub's wifi, then open:
+
+| | |
+| --- | --- |
+| **FTC Dashboard** (edit constants live) | **http://192.168.43.1:8080/dash** |
+| Robot Console (logs, config, wifi) | http://192.168.43.1:8080 |
+
+Five classes are exposed (`@Config`), so their constants appear in the dashboard
+while an OpMode runs: `Launcher`, `Intake`, `Robot`, `RobotCommands`,
+`ShootAndParkPaths`.
+
+**Which edits take effect instantly, and which need a re-INIT:**
+
+| Takes effect next loop | Needs re-INIT (press INIT again) |
+| --- | --- |
+| `SHOT_DIP_RPM`, `SHOT_RECOVER_RPM` | `SHOOT_HEADING`, `START_HEADING` |
+| `RPM_TOLERANCE`, `KEEP_FIRING_DROP_RPM` | — poses are built once in the |
+| all `Intake.STALL_*`, `TARGET_RPM` | constructor, so the path does not |
+| `Robot.STRAFE_SIGN` / `TURN_SIGN` | change under a running OpMode |
+| the four `RobotCommands` timeouts | |
+
+`Launcher.P` and `F` are in between: they are pushed to the motor controller on
+construction and whenever the flywheel leaves boost, so a change lands on the
+next spin-up rather than immediately.
+
+**`ShotPreset` cannot be dashboard-tuned at all** — it is an enum with a final
+field. That is what gamepad 2's D-pad ±100 RPM is for: tune on the stick, read
+the number off telemetry, write it into the file.
+
+Two practical notes: the dependency needs internet on the next Gradle sync, so
+sync at home rather than at an event; and the dashboard is a development tool,
+so don't plan to depend on it during matches.
+
+---
+
 ## Two things that look like bugs and are not
 
 Read these before you start, or you will debug them for an hour.

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.common.subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -32,6 +33,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  * to fire "3 shots" instead of "feed for 2 seconds", and it is also how you find
  * out a silent failure happened: telemetry says FIRING but Shots stays 0.
  */
+@Config
 public class Launcher {
 
     // ===================== SETTINGS =====================

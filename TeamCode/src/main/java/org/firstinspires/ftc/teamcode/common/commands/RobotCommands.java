@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.common.commands;
 
+import com.acmerobotics.dashboard.config.Config;
 import static com.pedropathing.ivy.groups.Groups.sequential;
 
 import com.pedropathing.ivy.Command;
@@ -35,6 +36,7 @@ import org.firstinspires.ftc.teamcode.common.subsystems.ShotPreset;
  * Every command only TELLS the Robot what to do; the Robot does the real work.
  * That is what keeps Auto and TeleOp shooting the same way.
  */
+@Config
 public final class RobotCommands {
 
     private RobotCommands() {} // just a toolbox, never "new" this

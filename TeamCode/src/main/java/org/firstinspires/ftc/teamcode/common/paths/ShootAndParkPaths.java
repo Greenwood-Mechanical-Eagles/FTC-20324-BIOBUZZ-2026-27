@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.common.paths;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.api.Paths;
 import com.pedropathing.api.PoseFactory;
 import com.pedropathing.math.Pose;
@@ -40,6 +41,7 @@ import org.firstinspires.ftc.teamcode.common.subsystems.Launcher;
  * See docs/PedroPathing/README.md.
  * ---------------------------------------------------------------------------
  */
+@Config
 public class ShootAndParkPaths {
 
     // ===================== SETTINGS =====================
