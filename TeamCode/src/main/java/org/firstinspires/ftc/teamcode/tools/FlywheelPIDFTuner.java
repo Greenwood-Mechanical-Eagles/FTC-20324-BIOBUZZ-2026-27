@@ -23,7 +23,7 @@ public class FlywheelPIDFTuner extends LinearOpMode {
 
     static final double TICKS_PER_REV = 28;       // bare REV HD Hex, no cartridges
     static final double FEED_POWER = 1.0;         // same as RapidFireDrive
-    static final double INTAKE_FEED_POWER = -1.0; // same as RapidFireDrive
+    static final double INTAKE_FEED_POWER = 1.0;  // +1 feeds pollen UP (measured 2026-11-25)
 
     @Override
     public void runOpMode() {

@@ -51,8 +51,13 @@ public class BackupPlainDrive extends LinearOpMode {
 
     // Set true if the intake must also run to push pollen up into the feeder
     static final boolean RUN_INTAKE_WHILE_FIRING = true;
-    // Intake direction: -1.0 pulls pollen IN (tested: +1 spit it out)
-    static final double INTAKE_FEED_POWER = -1.0;
+    // Intake direction: +1.0 pulls pollen IN.
+    // MEASURED ON THE ROBOT 2026-11-25. This file is otherwise the untouched
+    // meet TeleOp, and this is the one line changed in it -- because the old
+    // -1.0 was backwards, which means the intake ran the wrong way at the meet
+    // too, including while firing (RUN_INTAKE_WHILE_FIRING below). Revert this
+    // single constant if that turns out to be wrong.
+    static final double INTAKE_FEED_POWER = 1.0;
     // =============================================================
 
     private DcMotor frontLeftDrive;

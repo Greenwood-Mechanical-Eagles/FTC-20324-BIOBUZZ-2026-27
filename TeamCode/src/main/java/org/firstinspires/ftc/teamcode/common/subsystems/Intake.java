@@ -45,10 +45,11 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Intake {
 
     // ===================== SETTINGS =====================
-    // -1 pulls pollen IN (tested on the robot: +1 spits it out). This keeps the
-    // sign convention the proven TeleOp used, so the intake cannot come out
-    // inverted by switching to encoder control.
-    public static double IN_SIGN = -1.0;
+    // +1 pulls pollen IN. MEASURED ON THE ROBOT 2026-11-25: the old note in here
+    // claimed -1 pulled in, and driving it proved that backwards -- left trigger
+    // was spitting pollen out. This is the one place that decides intake
+    // direction, so flipping this sign flips in() and out() together.
+    public static double IN_SIGN = 1.0;
 
     /** Power used when running open loop (TARGET_RPM = 0). */
     public static double FULL_POWER = 1.0;
