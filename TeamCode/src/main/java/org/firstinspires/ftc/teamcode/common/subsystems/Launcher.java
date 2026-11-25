@@ -4,14 +4,17 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 /**
  * LAUNCHER = flywheel motor + feeder servo.
  *
- * This is the ONE place that knows how to shoot. TeleOp and Auto both use it.
- * The logic is copied from RapidFireDrive (tested), just moved into its own class.
+ * This is the ONE place that knows how to shoot. TeleOp and Auto both use it,
+ * so a shot tuned in TeleOp is the same shot Auto takes.
+ * The control logic came from the TeleOp that ran at the meet; it was moved here
+ * unchanged, then shot counting was added on top.
  *
  * How to use it:
  *   1. Make one:            launcher = new Launcher(hardwareMap);   (inside init / runOpMode)
@@ -19,7 +22,15 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  *   3. Fire / stop firing:  launcher.setFiring(true / false);
  *   4. EVERY loop call:     launcher.update();   (nothing happens without this!)
  *
- * Feeder only runs when the flywheel is at speed, so shots stay consistent.
+ * The feeder only runs once the flywheel is at speed, so every shot leaves at
+ * the same speed instead of the first one dribbling out.
+ *
+ * COUNTING SHOTS
+ * Every pollen that hits the spinning wheel steals energy from it, so the RPM
+ * dips for a moment and then recovers. We watch for that dip, which means the
+ * launcher can tell you how many pollen actually left the robot. Auto uses this
+ * to fire "3 shots" instead of "feed for 2 seconds", and it is also how you find
+ * out a silent failure happened: telemetry says FIRING but Shots stays 0.
  */
 public class Launcher {
 
@@ -28,6 +39,7 @@ public class Launcher {
     public static final double TICKS_PER_REV = 28;
 
     // Flywheel PIDF from "Flywheel PIDF Tuner" (I is always P/10, D stays 0).
+    // These are the values the TeleOp ran at the meet with.
     public static double P = 1.75;
     public static double F = 16.0;
 
@@ -41,14 +53,35 @@ public class Launcher {
     // Overshooting? Make BIGGER. Spin-up too slow? Make smaller. 99999 = boost off.
     public static double BOOST_WINDOW_RPM = 400;
 
-    // false = feeder runs ANY time you fire (no speed check). Leave true.
-    public static boolean SPEED_CHECK_ON = true;
-
     // +1.0 loads pollen INTO the flywheel (tested on robot).
     public static double FEED_POWER = 1.0;
 
     // Smallest speed the D-pad fine-tune can go down to.
     public static double MIN_ADJUST_RPM = 100;
+
+    // ---- Shot counting (the RPM dip) ----
+    // A pollen hitting the wheel pulls the RPM down by at least this much.
+    // TUNE: run "Flywheel PIDF Tuner", hold the right trigger for a few shots and
+    // read "Lowest RPM in last volley". Set this to about half of (target - lowest).
+    // Too HIGH and real shots are missed; too LOW and ordinary wobble counts as a shot.
+    public static double SHOT_DIP_RPM = 150;
+
+    // The wheel has to climb back to within this much of target before the next
+    // dip can count. Stops one long sag from counting as ten shots.
+    public static double SHOT_RECOVER_RPM = 75;
+
+    // SAFETY NET. If we are told to fire but the wheel never quite lands inside
+    // RPM_TOLERANCE, feed anyway after this long rather than sit there doing
+    // nothing for the whole match. 0 = never feed until READY (old behavior).
+    // This is the difference between "a bit off speed" and "scored nothing".
+    //
+    // It only rescues a wheel that is CLOSE: KEEP_FIRING_DROP_RPM still applies, so
+    // a wheel more than that far below target stays blocked on purpose, because
+    // pushing pollen into a wheel at half speed jams the feeder and scores nothing
+    // anyway. When that happens telemetry says "WHEEL TOO SLOW", which means the
+    // target is set higher than this motor and battery can actually reach -- pick a
+    // lower ShotPreset.
+    public static double FEED_ANYWAY_AFTER_MS = 1200;
     // ====================================================
 
     private final DcMotorEx flywheel;
@@ -61,6 +94,14 @@ public class Launcher {
     private boolean clearingJam = false;
     private boolean volleyActive = false;
     private boolean feeding = false;
+
+    // Shot counting state
+    private final ElapsedTime firingTimer = new ElapsedTime();
+    private boolean reachedSpeedThisVolley = false;
+    private boolean fedAnyway = false;
+    private boolean inDip = false;
+    private int shotCount = 0;
+    private double deepestDipRpm = 0;
 
     public Launcher(HardwareMap hardwareMap) {
         flywheel = hardwareMap.get(DcMotorEx.class, "outtakeMotor");
@@ -103,6 +144,14 @@ public class Launcher {
 
     /** true = feed pollen whenever the wheel is ready. false = stop feeding. */
     public void setFiring(boolean firing) {
+        if (firing && !this.firing) {
+            // A new volley is starting: restart the clock and the shot detector.
+            firingTimer.reset();
+            reachedSpeedThisVolley = false;
+            fedAnyway = false;
+            inDip = false;
+            deepestDipRpm = 0;
+        }
         this.firing = firing;
     }
 
@@ -126,6 +175,21 @@ public class Launcher {
 
     /** True while the feeder is actually pushing pollen into the flywheel. */
     public boolean isFeeding() { return feeding; }
+
+    /** How many pollen we have seen leave the robot since the last resetShotCount(). */
+    public int getShotCount() { return shotCount; }
+
+    /** Call before a volley if you want to count only that volley's shots. */
+    public void resetShotCount() { shotCount = 0; }
+
+    /** True if the wheel ever landed inside RPM_TOLERANCE during this volley. */
+    public boolean reachedSpeedThisVolley() { return reachedSpeedThisVolley; }
+
+    /** True when the safety net kicked in: we fed without ever reaching target speed. */
+    public boolean isFeedingAnyway() { return fedAnyway; }
+
+    /** Biggest RPM dip seen in this volley. Use it to tune SHOT_DIP_RPM on the field. */
+    public double getDeepestDip() { return deepestDipRpm; }
 
     // ----------------- Call this EVERY loop -----------------
 
@@ -154,18 +218,31 @@ public class Launcher {
             flywheel.setPower(0);
         }
 
-        // Volley starts the first time the wheel is READY while firing,
-        // and lasts until firing stops.
+        // A volley starts the first time the wheel is READY while firing, and lasts
+        // until firing stops. FEED_ANYWAY_AFTER_MS is the safety net for the case
+        // where the wheel hovers just outside RPM_TOLERANCE forever.
         if (!firing || targetRpm == 0) {
             volleyActive = false;
-        } else if (isAtSpeed()) {
-            volleyActive = true;
+            reachedSpeedThisVolley = false;
+            fedAnyway = false;
+            inDip = false;
+        } else {
+            if (isAtSpeed()) {
+                reachedSpeedThisVolley = true;
+            } else if (!reachedSpeedThisVolley
+                    && FEED_ANYWAY_AFTER_MS > 0
+                    && firingTimer.milliseconds() > FEED_ANYWAY_AFTER_MS) {
+                fedAnyway = true;
+            }
+            if (reachedSpeedThisVolley || fedAnyway) {
+                volleyActive = true;
+            }
         }
 
         boolean canFeed;
-        if (!SPEED_CHECK_ON) {
-            canFeed = true;
-        } else if (volleyActive) {
+        if (volleyActive) {
+            // Pause between shots while the wheel climbs back, but don't dribble
+            // pollen out at half speed either.
             canFeed = currentRpm >= targetRpm - KEEP_FIRING_DROP_RPM;
         } else {
             canFeed = false; // waiting for the first READY
@@ -180,11 +257,59 @@ public class Launcher {
         } else {
             feeder.setPower(0);
         }
+
+        countShots();
+    }
+
+    /**
+     * Watch for the RPM dip a pollen makes when it hits the wheel.
+     *
+     * Only counts once the wheel has genuinely been at speed this volley, because
+     * during spin-up the RPM is hundreds below target and every loop would look
+     * like a shot. That also means a volley fired by the FEED_ANYWAY safety net
+     * reports 0 shots, which is exactly the signal you want: something is wrong.
+     */
+    private void countShots() {
+        if (!volleyActive || !reachedSpeedThisVolley) {
+            inDip = false;
+            return;
+        }
+
+        double dip = targetRpm - currentRpm;
+        deepestDipRpm = Math.max(deepestDipRpm, dip);
+
+        if (!inDip && dip >= SHOT_DIP_RPM) {
+            inDip = true;
+            shotCount++;
+        } else if (inDip && dip <= SHOT_RECOVER_RPM) {
+            inDip = false;
+        }
     }
 
     public void addTelemetry(Telemetry telemetry) {
-        telemetry.addData("Launcher", targetRpm == 0 ? "OFF"
-                : (isAtSpeed() ? "READY" : (boosting ? "BOOSTING" : "SPINNING UP")));
+        // If the robot is doing nothing, this has to say WHY. A launcher that
+        // quietly refuses to feed is the worst failure we have, because from the
+        // driver's seat it looks the same as a jam, a flat battery or a bad preset.
+        String state;
+        if (targetRpm == 0) {
+            state = "OFF";
+        } else if (feeding) {
+            state = fedAnyway ? "FIRING (not at speed!)" : "FIRING";
+        } else if (firing && currentRpm < targetRpm - KEEP_FIRING_DROP_RPM
+                && firingTimer.milliseconds() > FEED_ANYWAY_AFTER_MS) {
+            state = "WHEEL TOO SLOW - not feeding, lower the preset";
+        } else if (isAtSpeed()) {
+            state = "READY";
+        } else if (boosting) {
+            state = "BOOSTING";
+        } else {
+            state = "SPINNING UP";
+        }
+
+        telemetry.addData("Launcher", state);
         telemetry.addData("Flywheel RPM", "%.0f / target %.0f", currentRpm, targetRpm);
+        telemetry.addData("Shots", shotCount);
+        telemetry.addData("Deepest dip this volley", "%.0f RPM (SHOT_DIP_RPM = %.0f)",
+                deepestDipRpm, SHOT_DIP_RPM);
     }
 }
