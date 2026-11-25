@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.subsystems;
+package org.firstinspires.ftc.teamcode.common.subsystems;
 
 /**
  * Flywheel speeds for each place we shoot from.

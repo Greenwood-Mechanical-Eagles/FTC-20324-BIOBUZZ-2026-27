@@ -1,12 +1,12 @@
-package org.firstinspires.ftc.teamcode.commands;
+package org.firstinspires.ftc.teamcode.common.commands;
 
 import static com.pedropathing.ivy.groups.Groups.sequential;
 
 import com.pedropathing.ivy.Command;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.subsystems.Robot;
-import org.firstinspires.ftc.teamcode.subsystems.ShotPreset;
+import org.firstinspires.ftc.teamcode.common.subsystems.Robot;
+import org.firstinspires.ftc.teamcode.common.subsystems.ShotPreset;
 
 /**
  * COMMANDS = building blocks for Autonomous.
